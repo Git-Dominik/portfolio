@@ -1,0 +1,69 @@
+@property --bg{syntax:'<color>';inherits:true;initial-value:#0a0a0a}
+@property --fg{syntax:'<color>';inherits:true;initial-value:#f2f0ea}
+@property --rp{syntax:'<percentage>';inherits:false;initial-value:0%}
+
+:root{
+  --accent:124,137,255;
+  /* Two accents, because one can't serve both themes: a fill needs to be dark enough for
+     white text on top (4.5:1), while accent-coloured *text* needs to be light enough to
+     read on the dark background. #5D6BEE was 4.37 / 4.15 - failing both ways. */
+  --accent-solid:#5563E9;   /* fills, borders, rules, dots - always carries white text */
+  --accent-ink:#8E99FF;     /* accent-coloured text on the dark background */
+  --max:740px;
+  --edge:clamp(1.5rem,5vw,4rem);
+  --ease:cubic-bezier(.65,0,.35,1);
+  --out:cubic-bezier(.16,1,.3,1);
+  --sweep:cubic-bezier(.5,.1,.2,1);
+  --spring:cubic-bezier(.22,1,.36,1);
+  /* Bricolage Grotesque for UI text. 400 and 600 matter: nav links, labels and .copy ask
+     for them, and without them those silently rendered in Arial. */
+  --sans:'Bricolage Grotesque','Helvetica Neue',Arial,sans-serif;
+  /* Separate face for -webkit-text-stroke text only. Chrome cannot stroke Bricolage's
+     multi-axis variable font and silently substitutes a serif, so its rectangular serifs
+     were being drawn over the real letterforms. Space Grotesk strokes correctly. */
+  --display:'Space Grotesk','Helvetica Neue',Arial,sans-serif;
+  --press:140ms;
+}
+
+*{box-sizing:border-box}
+/* No scroll-snap: free, native scrolling. Anchor jumps stay smooth. */
+html{scroll-behavior:smooth;scroll-padding-top:5rem;color-scheme:dark}
+body{--bg:#0a0a0a;--fg:#f2f0ea;margin:0;background:var(--bg);color:var(--fg);font:400 18px/1.75 'Source Serif 4',Georgia,serif;-webkit-font-smoothing:antialiased;transition:--bg .6s var(--ease),--fg .6s var(--ease)}
+body.transitioned{--bg:#faf9f6;--fg:#141414;color-scheme:light;--accent-ink:#5563E9}
+h1,h2,h3{font-family:var(--sans);text-wrap:balance}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent-solid);outline-offset:4px;border-radius:3px}
+::selection{background:var(--accent-solid);color:#fff}
+
+/* Text wrap: balance headings (already), keep ragged prose from ending on a single word. */
+p{text-wrap:pretty}
+
+.skip-link{position:absolute;left:-9999px;top:0;background:var(--fg);color:var(--bg);padding:.6em 1em;z-index:200;font:.9rem var(--sans);transition:left .2s var(--out),top .2s var(--out)}
+.skip-link:focus{left:var(--edge);top:var(--edge)}
+
+p{margin:0 0 1.15rem;max-width:62ch}
+p:last-child{margin-bottom:0}
+
+.label{font:.85rem var(--sans);letter-spacing:.02em;color:color-mix(in srgb,var(--fg) 64%,transparent)}
+
+/* Download-CV button. Ghost by default, filled when it carries .btn-cv-primary */
+.btn-cv{display:inline-flex;align-items:center;gap:.55rem;font:700 .88rem var(--sans);letter-spacing:.01em;text-decoration:none;color:var(--fg);background:transparent;border:1px solid color-mix(in srgb,var(--fg) 28%,transparent);border-radius:999px;padding:.7rem 1.3rem;transition:transform var(--press) var(--out),box-shadow .2s,background .2s,color .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.btn-cv svg{width:16px;height:16px;fill:currentColor;flex:none}
+.btn-cv:active{transform:translateY(0) scale(.97)}
+.btn-cv:hover,.btn-cv:focus-visible{border-color:var(--accent-ink);color:var(--accent-ink);transform:translateY(-2px)}
+.btn-cv-primary{background:var(--accent-solid);border-color:var(--accent-solid);color:#fff}
+.btn-cv-primary:focus-visible{outline-color:#fff}
+.btn-cv-primary:hover,.btn-cv-primary:focus-visible{color:#fff;box-shadow:0 12px 26px -12px color-mix(in srgb,var(--accent-solid) 65%,transparent)}
+.hero-actions{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:2rem;animation:hero-rise .7s .38s cubic-bezier(.16,1,.3,1) both}
+
+/* Touch-only reset. Hover effects are on by default and switched off only where there is
+   genuinely no pointer. Gating them the other way round - showing them only under
+   (hover:hover) - means any browser that mis-reports takes every affordance with it,
+   and a headless or mis-detecting desktop loses the whole hover layer. */
+@media(hover:none){
+  .btn-cv:hover{transform:none;border-color:color-mix(in srgb,var(--fg) 28%,transparent);color:var(--fg)}
+  .btn-cv-primary:hover{border-color:var(--accent-solid);color:#fff;box-shadow:none}
+}
+
+/* Scroll progress */
+.progress{position:fixed;top:0;left:0;width:100%;height:3px;transform-origin:0 50%;transform:scaleX(var(--sp,0));background:linear-gradient(90deg,#7C89FF,#A56BFF,#FF7FA8);z-index:101;pointer-events:none;will-change:transform}

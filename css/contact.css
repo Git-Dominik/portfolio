@@ -1,0 +1,27 @@
+/* Contact */
+.contact-links{display:flex;flex-direction:column;gap:1rem;margin-top:1.8rem;font:1.15rem var(--sans)}
+.contact-links a{text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--fg) 30%,transparent);padding-bottom:2px;width:fit-content;transition:border-color .2s,color .2s,transform var(--press) var(--out)}
+.contact-links a:hover,.contact-links a:focus-visible{border-color:var(--accent-ink);color:var(--accent-ink)}
+@media(hover:none){.contact-links a:hover{border-color:color-mix(in srgb,var(--fg) 30%,transparent);color:inherit}}
+footer{max-width:var(--max);margin:0 auto;padding:3rem var(--edge) 3.5rem;font:.82rem var(--sans);color:color-mix(in srgb,var(--fg) 50%,transparent)}
+
+/* Contact + footer */
+/* Single column: the status/location aside used to sit in a second column, and without it
+   the 1.5fr/1fr split would leave the right 40% of the row empty. */
+.contact-grid{display:grid;gap:2.2rem}
+.mail-row{display:flex;flex-wrap:wrap;align-items:center;gap:.8rem 1rem;margin-top:1.6rem}
+/* overflow-wrap, not word-break:break-all - a break-all mangles the address at any width. */
+.mail{font:700 clamp(1.35rem,3.4vw,2rem)/1.15 var(--sans);letter-spacing:-.02em;text-decoration:none;border-bottom:3px solid var(--accent-solid);padding-bottom:.15rem;overflow-wrap:anywhere;transition:color .2s}
+.mail:hover{color:var(--accent-ink)}
+.copy,.top{font:600 .85rem var(--sans);color:var(--fg);background:transparent;border:1px solid color-mix(in srgb,var(--fg) 28%,transparent);padding:.5rem 1rem;border-radius:999px;cursor:pointer;transition:background .2s,color .2s,border-color .2s,transform var(--press) var(--out);-webkit-tap-highlight-color:transparent}
+.copy:active,.top:active{transform:scale(.97)}
+.copy:hover,.top:hover{background:var(--fg);color:var(--bg)}
+@media(hover:none){.copy:hover,.top:hover{background:transparent;color:var(--fg)}}
+.copy.done{background:var(--accent-solid);border-color:var(--accent-solid);color:#fff}
+footer.foot{max-width:none;padding:3rem 0 1.5rem;overflow:hidden;color:var(--fg)}
+.wordmark{position:relative;padding:0 var(--edge);font:700 clamp(4rem,21vw,19rem)/.85 var(--display);letter-spacing:-.045em;white-space:nowrap;user-select:none}
+.wordmark .out{display:block;color:transparent;-webkit-text-stroke:1.5px color-mix(in srgb,var(--fg) 32%,transparent)}
+.wordmark .fill{position:absolute;left:0;top:0;padding:0 var(--edge);background:linear-gradient(100deg,#7C89FF,#A56BFF 50%,#FF7FA8);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;opacity:0;transition:opacity .4s;-webkit-mask-image:radial-gradient(circle 190px at var(--mx,-999px) var(--my,-999px),#000,transparent);mask-image:radial-gradient(circle 190px at var(--mx,-999px) var(--my,-999px),#000,transparent)}
+.wordmark:hover .fill{opacity:1}
+@media(hover:none){.wordmark .fill{opacity:.85;-webkit-mask-image:none;mask-image:none}}
+.foot-row{max-width:var(--max);margin:2.2rem auto 0;padding:0 var(--edge);display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:1rem;font:.85rem var(--sans);color:color-mix(in srgb,var(--fg) 64%,transparent)}

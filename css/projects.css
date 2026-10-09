@@ -1,0 +1,54 @@
+/* Projects. The tilt is interpolated in JS, so no CSS transition on transform here;
+   two easings stacked would trail the pointer. */
+.project-card{position:relative;padding:clamp(2rem,5vw,3.2rem);border:1px solid color-mix(in srgb,var(--fg) 14%,transparent);border-radius:22px;background:color-mix(in srgb,var(--fg) 3%,transparent);overflow:hidden;isolation:isolate;will-change:transform}
+.project-card-glow{position:absolute;top:-140px;right:-120px;width:340px;height:340px;background:radial-gradient(circle,rgba(124,137,255,.38) 0,rgba(255,120,150,.2) 45%,transparent 72%);filter:blur(60px);pointer-events:none;z-index:-1;animation:glow 20s ease-in-out infinite}
+@keyframes glow{0%,100%{transform:none}50%{transform:translate(-18px,20px) scale(1.1)}}
+.project-eyebrow{font:700 .78rem var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink);margin-bottom:.9rem}
+.project-title{font-size:clamp(2rem,4.6vw,2.6rem);letter-spacing:-.02em;margin:0 0 .9rem}
+.project-card p{color:color-mix(in srgb,var(--fg) 86%,transparent);max-width:54ch}
+.project-tags{margin:1.3rem 0 1.8rem}
+.project-actions{display:flex;flex-wrap:wrap;align-items:center;gap:1.5rem}
+.btn-primary{display:inline-flex;background:var(--accent-solid);color:#fff;font:700 .92rem var(--sans);letter-spacing:.01em;padding:.8rem 1.5rem;border-radius:999px;text-decoration:none;transition:transform var(--press) var(--out),box-shadow .2s;-webkit-tap-highlight-color:transparent}
+.btn-primary:active{transform:translateY(0) scale(.97)}
+.btn-primary:focus-visible{outline-color:#fff}
+.btn-primary:hover,.btn-primary:focus-visible{transform:translateY(-2px);box-shadow:0 12px 26px -12px color-mix(in srgb,var(--accent-solid) 65%,transparent)}
+.project-more-link{font:.92rem var(--sans);text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--fg) 35%,transparent);text-underline-offset:3px}
+.project-more-link:hover{text-decoration-color:var(--accent-ink)}
+@media(hover:none){
+  .btn-primary:hover{transform:none;box-shadow:none}
+  .project-more-link:hover{text-decoration-color:color-mix(in srgb,var(--fg) 35%,transparent)}
+}
+@media(max-width:480px){.project-card{padding:1.7rem;border-radius:16px}.project-card-glow{width:220px;height:220px;top:-90px;right:-80px}}
+
+/* Project card: a highlight follows the pointer (the tilt itself is JS-driven) */
+.project-card::before{content:"";position:absolute;inset:0;background:radial-gradient(420px circle at var(--mx,50%) var(--my,0%),rgba(var(--accent),.2),transparent 60%);opacity:0;transition:opacity .3s;z-index:-1;pointer-events:none}
+.project-card:hover::before{opacity:1}
+@media(hover:none){.project-card:hover::before{opacity:0}}
+
+/* More projects: a compact accordion, so extra projects don't stretch the page */
+.proj-more{margin-top:1.8rem}
+.proj-more>.label{margin-bottom:.6rem}
+/* The list's own bottom border needs room too, or the last row sits on the line. */
+.proj-list{list-style:none;margin:0;padding:0 0 .5rem;border-bottom:1px solid color-mix(in srgb,var(--fg) 14%,transparent)}
+.proj-row{border-top:1px solid color-mix(in srgb,var(--fg) 14%,transparent)}
+/* 12px of inset, not 3: the row's own border is a visible boundary the text shouldn't touch. */
+.proj-head{display:grid;grid-template-columns:minmax(0,12.5rem) minmax(0,1fr) auto;align-items:center;gap:.35rem 1rem;width:100%;padding:1.05rem .75rem;background:none;border:0;color:inherit;text-align:left;cursor:pointer;font:inherit;transition:transform var(--press) var(--out);-webkit-tap-highlight-color:transparent;border-radius:6px}
+.proj-head:active{transform:scale(.995)}
+.proj-name{font:700 1.15rem var(--sans);letter-spacing:-.01em;transition:color .2s;overflow-wrap:anywhere}
+/* The summary wraps instead of truncating; an ellipsis would hide the one line that
+   says what the project actually is. */
+.proj-sum{font:.92rem var(--sans);color:color-mix(in srgb,var(--fg) 64%,transparent);overflow-wrap:anywhere}
+.proj-plus{position:relative;width:14px;height:14px;transition:transform .4s var(--out)}
+.proj-plus::before,.proj-plus::after{content:"";position:absolute;left:0;top:6px;width:14px;height:2px;border-radius:1px;background:currentColor}
+.proj-plus::after{transform:rotate(90deg)}
+.proj-head:hover .proj-name{color:var(--accent-ink)}
+.proj-row.is-open .proj-name{color:var(--accent-ink)}
+.proj-row.is-open .proj-plus{transform:rotate(45deg)}
+.proj-body{display:grid;grid-template-rows:0fr;visibility:hidden;transition:grid-template-rows .45s var(--out),visibility 0s .45s}
+.proj-row.is-open .proj-body{grid-template-rows:1fr;visibility:visible;transition-delay:0s}
+/* overflow-clip-margin lets focus rings on links inside the panel escape the clip. */
+.proj-inner{min-height:0;overflow:hidden;overflow-clip-margin:8px}
+.proj-inner>p{margin:0 0 1rem;padding:0 .75rem;max-width:54ch;font-size:.98rem;line-height:1.65;color:color-mix(in srgb,var(--fg) 86%,transparent)}
+.proj-foot{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem .6rem;padding:0 .75rem 1.3rem}
+.proj-foot .project-more-link{margin-left:auto}
+@media(max-width:560px){.proj-head{grid-template-columns:minmax(0,1fr) auto;gap:.15rem 1rem}.proj-plus{grid-column:2;grid-row:1/3}}

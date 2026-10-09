@@ -1,0 +1,26 @@
+/* Skills: a small board. Backend leads (it's the focus); icons stay mono until you point at them. */
+.skill-board{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:.9rem}
+.skill-panel{position:relative;padding:1.2rem 1.2rem 1.3rem;border:1px solid color-mix(in srgb,var(--fg) 14%,transparent);border-radius:20px;background:color-mix(in srgb,var(--fg) 3%,transparent);overflow:hidden;isolation:isolate}
+.skill-panel .label{margin-bottom:.9rem}
+.skill-backend{grid-column:1/-1}
+.skill-backend::before{content:"";position:absolute;top:-110px;right:-80px;width:300px;height:300px;background:radial-gradient(circle,rgba(124,137,255,.34) 0,rgba(255,120,150,.18) 45%,transparent 72%);filter:blur(50px);z-index:-1;pointer-events:none}
+.skill-tiles{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:.6rem}
+.skill-tile{position:relative;display:inline-flex;align-items:center;gap:.65rem;padding:.6rem 1rem .6rem .8rem;border:1px solid color-mix(in srgb,var(--fg) 12%,transparent);border-radius:999px;background:color-mix(in srgb,var(--bg) 60%,transparent);font:600 .95rem var(--sans);overflow:hidden;transition:border-color .25s,transform .35s var(--out)}
+.skill-tile::before{content:"";position:absolute;inset:0;background:radial-gradient(160px circle at var(--mx,50%) var(--my,0%),rgba(var(--accent),.28),transparent 70%);opacity:0;transition:opacity .3s;pointer-events:none}
+.skill-tile i{position:relative;font-size:1.4rem;line-height:1;filter:grayscale(1);opacity:.7;transition:filter .3s,opacity .3s,transform .4s var(--spring)}
+.skill-tile span{position:relative}
+.skill-tile:hover{border-color:var(--accent-solid);transform:translateY(-3px)}
+.skill-tile:hover::before{opacity:1}
+.skill-tile:hover i{filter:none;opacity:1;transform:scale(1.12) rotate(-4deg)}
+/* No devicon glyph for these, so the tile keeps its own padding balance */
+.skill-tile-plain{padding-left:1rem}
+/* Touch-only: a tap latches :hover, so drop the lift, the spotlight and the icon pop.
+   The icons stay in full colour - on touch there is no hover to reveal them. */
+@media(hover:none){
+  .skill-tile:hover{transform:none;border-color:color-mix(in srgb,var(--fg) 12%,transparent)}
+  .skill-tile:hover::before{opacity:0}
+  .skill-tile:hover i{filter:none;opacity:1;transform:none}
+  .skill-tile i{filter:none;opacity:1}
+}
+@media(max-width:640px){.skill-board{grid-template-columns:1fr}}
+

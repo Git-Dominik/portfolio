@@ -1,0 +1,16 @@
+/* Hover art on the dividers: a character pops up over the line, bounces once, then
+   tracks the pointer and swaps sides depending on which way you're travelling.
+   JS owns the whole transform (position, mirror and the bounce) in one rAF pass, so
+   nothing here animates transform and nothing fights for control of it. */
+.hover-art{position:fixed;left:0;top:0;z-index:90;pointer-events:none;opacity:0;transform-origin:50% 100%;transition:opacity .2s ease;will-change:transform,opacity}
+.hover-art.on{opacity:1}
+.hover-art img{display:block;max-height:min(9vh,58px);max-width:min(14vw,76px);width:auto;height:auto}
+/* No filter here on purpose. A drop-shadow on a moving, scaling, mirrored PNG forces the
+   browser to re-rasterise and re-blur the image on every single frame, which is what made
+   this stutter. Without it the whole thing is one compositor layer. */
+
+@media(max-width:980px){
+  /* The nav becomes a menu button here, but there's still a fine pointer. The art stays;
+     it is pointer-events:none so it can never swallow a tap. */
+  .hover-art img{max-height:min(8vh,48px);max-width:min(13vw,64px)}
+}

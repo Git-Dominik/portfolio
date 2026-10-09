@@ -1,0 +1,65 @@
+/* NAV */
+/* Three equal side columns so the links are genuinely centred. space-between can't do
+   this: it distributes the leftover space, and the right-hand cluster (CV + GitHub +
+   language switch) is wider than the logo, so the links drifted ~80px left of centre. */
+.site-nav{position:fixed;inset:0 0 auto 0;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;padding:1.4rem var(--edge);z-index:100;color:#fff;mix-blend-mode:difference;-webkit-tap-highlight-color:transparent}
+.nav-logo{justify-self:start;font:700 1.05rem var(--sans);text-decoration:none;letter-spacing:-.02em;border-radius:6px}
+.nav-links{display:flex;gap:1.8rem;justify-self:center}
+.nav-links a{font:.92rem var(--sans);text-decoration:none;letter-spacing:.01em;padding-bottom:2px;border-bottom:1px solid transparent;transition:border-color .25s,color .25s;white-space:nowrap}
+.nav-links a.active{color:rgba(255,255,255,.9)}
+.nav-links a:focus-visible{outline:2px solid currentColor;outline-offset:5px;border-radius:3px}
+.nav-right{display:flex;align-items:center;gap:1.2rem;justify-self:end}
+.lang-switch{display:flex;gap:.9rem}
+.lang-switch button{background:none;border:0;color:rgba(255,255,255,.55);font:.82rem var(--sans);cursor:pointer;padding:.2rem 0;letter-spacing:.03em;transition:color .2s;position:relative}
+.lang-switch button:focus-visible{outline:2px solid currentColor;outline-offset:4px;border-radius:3px}
+.nav-toggle{display:none;flex-direction:column;justify-content:center;gap:5px;width:28px;height:28px;background:none;border:0;cursor:pointer;padding:0;color:inherit;border-radius:5px}
+.nav-toggle span{display:block;width:100%;height:2px;background:currentColor;transition:transform .28s var(--out),opacity .2s}
+body.nav-open .nav-toggle span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+body.nav-open .nav-toggle span:nth-child(2){opacity:0}
+body.nav-open .nav-toggle span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+/* Hover treatment applies everywhere except a device that genuinely has no pointer. */
+.lang-switch button.active,.lang-switch button:hover,.lang-switch button:focus-visible{color:#fff}
+
+/* The desktop bar needs ~940px before the links collide with the CV/GitHub/language
+   cluster (widest case is Polish, at 804px of content). The old 720px breakpoint let it
+   overlap itself across a 220px band of widths, so the menu takes over earlier. */
+@media(max-width:980px){
+  .nav-toggle{display:flex}
+  /* The nav is blended with difference so it inverts over the light sections. That blend
+     applies to the whole nav group, which cancelled out the menu panel's own background;
+     the hero read straight through it. While the menu is open the nav drops the blend and
+     becomes a real surface. */
+  body.nav-open .site-nav{mix-blend-mode:normal;background:var(--bg);box-shadow:0 10px 24px -18px rgba(0,0,0,.8)}
+  /* Without the difference blend the nav carries its own colour, so it has to follow the
+     theme: white text on the cream background is invisible. */
+  body.nav-open .site-nav{color:var(--fg)}
+  body.nav-open .nav-cv{border-color:color-mix(in srgb,var(--fg) 40%,transparent)}
+  body.nav-open .lang-switch button{color:color-mix(in srgb,var(--fg) 58%,transparent)}
+  body.nav-open .lang-switch button.active{color:var(--fg)}
+  /* justify-self would otherwise shrink this to its content width once it's an
+     absolutely-positioned grid item. */
+  .nav-links{display:none;position:absolute;top:100%;left:0;right:0;justify-self:stretch;flex-direction:column;gap:0;padding:.5rem var(--edge) 1.4rem;background:var(--bg);border-bottom:1px solid color-mix(in srgb,var(--fg) 14%,transparent);box-shadow:0 18px 30px -22px rgba(0,0,0,.65);mix-blend-mode:normal;isolation:isolate}
+  .nav-links a{color:var(--fg);padding:.95rem 0;border-bottom:1px solid color-mix(in srgb,var(--fg) 10%,transparent)}
+  .nav-links a:last-child{border-bottom:0}
+  .nav-links a.active{border-color:var(--accent-ink);color:var(--accent-ink)}
+  /* The panel drops in rather than snapping: it belongs to the toggle that opened it. */
+  body.nav-open .nav-links{display:flex;animation:nav-drop .3s var(--out) both;transform-origin:50% 0}
+  @keyframes nav-drop{from{opacity:0;transform:translateY(-8px)}}
+}
+
+.nav-gh{display:flex;color:inherit;opacity:.75;transition:opacity .2s;border-radius:5px}
+.nav-gh svg{width:20px;height:20px;fill:currentColor}
+.nav-cv{font:700 .74rem/1 var(--sans);letter-spacing:.09em;text-decoration:none;color:inherit;border:1px solid rgba(255,255,255,.4);border-radius:999px;padding:.5rem .8rem;opacity:.8;transition:opacity .2s,background .2s,border-color .2s,transform var(--press) var(--out)}
+.nav-cv:active{transform:scale(.96)}
+.nav-gh:hover,.nav-gh:focus-visible{opacity:1}
+.nav-cv:hover,.nav-cv:focus-visible{opacity:1;background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.75)}
+
+/* Touch-only: a tap leaves :hover latched on, so hand these back to their resting state.
+   Written as a reset rather than a gate - see the note in base.css. */
+@media(hover:none){
+  .nav-links a:hover{border-color:transparent;color:rgba(255,255,255,.9)}
+  .nav-links a.active{border-color:rgba(255,255,255,.6)}
+  .lang-switch button:hover{color:rgba(255,255,255,.55)}
+  .nav-gh:hover{opacity:.75}
+  .nav-cv:hover{opacity:.8;background:none;border-color:rgba(255,255,255,.4)}
+}

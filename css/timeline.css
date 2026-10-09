@@ -1,0 +1,30 @@
+/* Experience: scroll-driven timeline (JS sets --tl-progress 0..1) */
+.timeline{--tl-indent:2.6rem;position:relative;margin-top:.5rem;padding-left:var(--tl-indent)}
+.tl-line{position:absolute;left:6px;top:.6rem;bottom:0;width:2px;border-radius:2px;background:color-mix(in srgb,var(--fg) 14%,transparent)}
+.tl-fill{position:absolute;inset:0;border-radius:2px;background:linear-gradient(to bottom,var(--accent-solid),#A56BFF 55%,#FF7FA8);clip-path:inset(0 0 calc((1 - var(--tl-progress,0)) * 100%) 0);transition:clip-path .28s ease-out}
+.timeline:not(.is-enhanced) .tl-fill{clip-path:none}
+.tl-head{position:absolute;left:50%;top:calc(var(--tl-progress,0) * 100%);width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px rgba(var(--accent),.35),0 0 16px 3px rgba(var(--accent),.55);transition:top .28s ease-out,opacity .3s}
+.timeline.is-complete .tl-head,.timeline:not(.is-enhanced) .tl-head{opacity:0}
+.tl-list{list-style:none;margin:0;padding:0}
+.tl-item{position:relative;padding-bottom:3.4rem}
+.tl-item:last-child{padding-bottom:0}
+.tl-dot{position:absolute;left:calc(var(--tl-indent) * -1);top:.3rem;z-index:1;width:14px;height:14px;border-radius:50%;background:var(--bg);border:2px solid color-mix(in srgb,var(--fg) 28%,transparent);transition:background-color .35s,border-color .35s,box-shadow .35s}
+.tl-item.is-active .tl-dot{background:var(--accent-solid);border-color:var(--accent-solid);box-shadow:0 0 0 5px rgba(var(--accent),.18)}
+.tl-next .tl-dot{border-style:dashed}
+.tl-next.is-active .tl-dot{background:var(--bg);border-style:solid;box-shadow:none}
+.tl-next.is-active .tl-dot::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:1.5px solid var(--accent-solid);opacity:0;animation:pulse 2.4s ease-out infinite}
+@keyframes pulse{0%{transform:scale(.6);opacity:.7}100%{transform:scale(1.5);opacity:0}}
+.tl-content{position:relative;transition:opacity .45s}
+/* De-emphasised, not disabled: .45 faded 86%-grey text failed contrast on the light theme. */
+.timeline.is-enhanced .tl-item:not(.is-active) .tl-content{opacity:.62}
+.tl-period{font:700 .82rem var(--sans);letter-spacing:.02em;color:var(--accent-ink);margin:0 0 .35rem}
+.tl-content h3{font-size:1.4rem;letter-spacing:-.01em;margin:0 0 .2rem}
+.tl-role{font:.92rem var(--sans);color:color-mix(in srgb,var(--fg) 68%,transparent);margin:0 0 .9rem}
+.tl-content p{color:color-mix(in srgb,var(--fg) 88%,transparent)}
+.tl-tags,.project-tags{display:flex;flex-wrap:wrap;gap:.5rem}
+.tl-tags{margin-top:1.1rem}
+.tag{font:.78rem var(--sans);letter-spacing:.02em;padding:.3rem .7rem;border-radius:999px;border:1px solid color-mix(in srgb,var(--fg) 18%,transparent);color:color-mix(in srgb,var(--fg) 72%,transparent)}
+/* A chip that carries a technology icon. Same pill as above, just with room for a glyph. */
+.tag-icon{display:inline-flex;align-items:center;gap:.45rem}
+.tag-icon i{font-size:1.05rem;line-height:1;flex:none}
+@media(max-width:480px){.timeline{--tl-indent:2.1rem}}

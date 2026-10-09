@@ -1,0 +1,8 @@
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  body,.hero-blob,.blob-field,.hero-greeting,.tl-fill,.tl-head,.tl-dot,.tl-content,.hero-gl{transition:none}
+  .btn-cv,.btn-primary,.copy,.top,.proj-head,.nav-cv,.nav-plus,.nav-toggle span,.proj-plus,.skip-link,.site-nav,.nav-links,.hover-art{transition:none}
+  .site-nav,.scroll-cue,.hero-blob,.hero-pfp,.hero-name,.hero-role,.hero-greeting,.hero-actions,.blob-core,.blob-warm,.blob-cool,.blob-track,.project-card-glow,.scroll-cue span::after,.tl-next.is-active .tl-dot::after,.band-track{animation:none}
+  body.nav-open .nav-links{animation:none}
+  .section-lines path{stroke-dashoffset:0;transition:none}
+}

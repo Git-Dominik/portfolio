@@ -1,0 +1,8 @@
+# Agent skills tooling, not part of the site
+.agents/
+skills-lock.json
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+node_modules/
