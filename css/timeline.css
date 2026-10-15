@@ -76,9 +76,13 @@
 .exp-entry:last-child::after{height:calc(var(--p,0) * (100% - var(--node)/2))}
 
 /* The open entry is a placeholder, not a role, so its track stays dashed rather than
-   filled. */
+   filled. The ::after has to be switched off outright, not just quieted: at opacity .45 it
+   still painted a solid wash across the whole segment once --p reached 1, so scrolling to
+   the bottom buried the stripes and turned the placeholder into the most solid line on the
+   track - exactly backwards. background:none keeps the element for the shared rule to
+   measure against while painting nothing. */
 .exp-open::before{background:repeating-linear-gradient(to bottom,color-mix(in srgb,var(--fg) 14%,transparent) 0 4px,transparent 4px 9px)}
-.exp-open::after{opacity:.45}
+.exp-open::after{background:none}
 
 /* --- The dot -------------------------------------------------------------
    White core with an accent ring and glow. NOT a var(--bg) ring: that was tried to separate

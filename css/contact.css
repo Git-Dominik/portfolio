@@ -24,7 +24,18 @@ footer{max-width:var(--max);margin:0 auto;padding:3rem var(--edge) 3.5rem;font:.
   background-size:1000px 3px;background-repeat:repeat-x;background-position:0 100%;
   animation:mail-sweep 6s linear infinite}
 @keyframes mail-sweep{from{background-position:0 100%}to{background-position:-1000px 100%}}
-.mail:hover{color:var(--accent-ink)}
+/* Hover brightens rather than turning to the slate --accent-ink it used to drop to.
+
+   Note this is NOT var(--fg). .mail sets no colour of its own, so it inherits --fg from
+   body - the address is already full white in dark mode at rest. Hovering it to var(--fg)
+   would be a no-op with no feedback at all, which is why the slate was there in the first
+   place. Pure #fff is a real (if small) lift off #e7e7e5.
+
+   Light mode inverts that: --fg is near-black there, so #fff on cream would be invisible.
+   It goes to pure black instead - the same "more emphatic, same hue" move, in the
+   direction that actually reads. Neither theme passes through slate any more. */
+.mail:hover{color:#fff}
+[data-theme=light] body.transitioned .mail:hover{color:#000}
 .copy,.top{font:600 .85rem var(--sans);color:var(--fg);background:transparent;border:1px solid color-mix(in srgb,var(--fg) 28%,transparent);padding:.5rem 1rem;border-radius:0;cursor:pointer;transition:background .2s,color .2s,border-color .2s,transform var(--press) var(--out);-webkit-tap-highlight-color:transparent}
 .copy:active,.top:active{transform:scale(.97)}
 .copy:hover,.top:hover{background:var(--fg);color:var(--bg)}
