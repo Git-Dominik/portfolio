@@ -9,7 +9,7 @@ section{max-width:var(--max);margin:0 auto;padding:5.5rem var(--edge) 1rem;posit
 #contact{padding-bottom:6rem}
 
 /* Dark mode only: the middle sections take a floor a shade darker than the page. Dark needs
-   it - the page ground (#1c1c23) already sits close to the panel fills, so without a step
+   it - the page ground (#17171a) already sits close to the panel fills, so without a step
    they have no ground of their own. Light does not: the page is bright there and the panels
    already do the separating. Darkened toward black rather than toward a second hue, so the
    single accent still owns all the colour on the page.
@@ -44,7 +44,19 @@ section{max-width:var(--max);margin:0 auto;padding:5.5rem var(--edge) 1rem;posit
    read as dirty rather than as depth. 97% is barely a shade down - the bloom and the
    ribbon are meant to be doing the work there, not the ground. */
 [data-theme=dark] .closing{background:color-mix(in srgb,var(--bg) 78%,#000)}
-[data-theme=light] body.transitioned .closing{background:color-mix(in srgb,var(--bg) 97%,var(--fg))}
+/* Light gets the same three-part treatment it was missing: a floor on the middle sections,
+   a deeper one on the closing block, and the band's lower gap carried into the run. All of
+   it was dark-only, which left light mode a single flat sheet from hero to footer - the
+   "boring background" problem, solved for one theme and not the other.
+
+   The steps are much shallower than dark's, and move toward --fg rather than toward black.
+   Dark can afford 87% because near-black on near-black still reads; on a light ground the
+   same ratio lands in muddy grey. 98% and 94% are roughly 5 and 14 levels down from the
+   page - present, but they read as paper rather than as tint. The two are deliberately far
+   apart so the closing block still separates from the sections above it. */
+[data-theme=light] body.transitioned #content section:not(#contact)::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:100vw;height:calc(100% + 2.5rem + 1px);z-index:-1;background:color-mix(in srgb,var(--bg) 98%,var(--fg))}
+[data-theme=light] body.transitioned .closing{background:color-mix(in srgb,var(--bg) 94%,var(--fg))}
+[data-theme=light] body.transitioned .band-wrap{box-shadow:0 .5rem 0 color-mix(in srgb,var(--bg) 98%,var(--fg))}
 /* The background ribbon behind the block (js/herowave.js, the CLOSING instance) plus the
    soft bloom it sits on. Light mode gets its own treatment rather than a dimmed copy of the
    dark one: additive blending is a no-op on a near-white ground, so the shader switches to
@@ -81,7 +93,7 @@ section{max-width:var(--max);margin:0 auto;padding:5.5rem var(--edge) 1rem;posit
    are where this change does its work. */
 .eyebrow-heading{font-size:clamp(2.1rem,4.4vw,3.1rem);font-weight:300;letter-spacing:-.01em;line-height:1.05;margin:0 0 2.2rem;display:flex;flex-wrap:wrap;align-items:center;gap:.55rem 1.2rem}
 .eyebrow-heading::before{content:attr(data-index);flex:0 0 100%;font:700 .74rem var(--sans);letter-spacing:.16em;color:var(--accent-ink)}
-.eyebrow-heading::after{content:"";flex:1;min-width:2rem;height:1px;background:var(--accent-solid)}
+.eyebrow-heading::after{content:"";flex:1;min-width:2rem;height:1px;background:var(--rule-line)}
 
 /* Background curves draw themselves in as each section arrives */
 .section-lines{position:absolute;top:0;left:50%;transform:translateX(-50%);width:100vw;height:100%;z-index:-1;pointer-events:none;overflow:hidden}
@@ -110,7 +122,7 @@ section.in-view .section-lines path{stroke-dashoffset:0;transition:stroke-dashof
    face from the solid ones the line would read as two typefaces. */
 .band span{display:flex;align-items:center;font:300 clamp(2rem,5.2vw,3.8rem)/1 var(--display);letter-spacing:0;white-space:nowrap;color:transparent;-webkit-text-stroke:1.5px color-mix(in srgb,var(--fg) 60%,transparent)}
 .band span:nth-child(even){color:var(--fg);-webkit-text-stroke:0}
-.band span::after{content:"";width:.26em;height:.26em;margin:0 1.7rem;background:var(--accent-solid);flex:none}
+.band span::after{content:"";width:.26em;height:.26em;border-radius:50%;margin:0 1.7rem;background:var(--accent-solid);flex:none}
 /* -2px on the Y is not a nudge: at line-height:1 the cap height sits just below the
    em-box centre, which left the row measuring 3.5px low inside the strip. */
 @keyframes marq{from{transform:translateY(-2px)}to{transform:translate(-50%,-2px)}}

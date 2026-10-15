@@ -10,18 +10,16 @@
 .hero-pfp.is-missing::after{content:"D.";font:700 1.5rem var(--sans);letter-spacing:-.03em;color:color-mix(in srgb,var(--fg) calc(62% * var(--dim)),transparent)}
 .hero-pfp img{display:block;width:100%;height:auto;border-radius:50%;object-fit:cover;aspect-ratio:1/1}
 @keyframes name-in{from{opacity:0;transform:translateY(.3em);clip-path:inset(-12% 100% -12% 0)}to{opacity:1;transform:none;clip-path:inset(-12% -4% -12% 0)}}
-/* Same construction as the old sheen: the name stays --fg, and a band of colour travels
-   across it. What changed is the band - it used to be one flat #AEB6FF highlight, and now it
-   is the first two greeting colours in their loop order, so indigo hands over to pink as it
-   crosses. The band runs 36% to 64% of the gradient: wide enough to read as a sweep, narrow
-   enough that the name is still mostly white. The third greeting colour is deliberately left
-   out - teal on its own is too cold against the other two.
-   Each colour stop is mixed toward --fg by --greet-mix, which is 0 on the dark hero and 55%
-   once the page flips light - see the note on --greet-mix in base.css. */
-.hero-name{font-size:clamp(3.4rem,11vw,8rem);font-weight:800;letter-spacing:-.045em;line-height:.95;margin:0 0 1.4rem;background:linear-gradient(100deg,var(--fg) 0 36%,color-mix(in srgb,var(--greet-1) calc(100% - var(--greet-mix)),var(--fg)) 43%,color-mix(in srgb,var(--greet-2) calc(100% - var(--greet-mix)),var(--fg)) 50%,var(--fg) 64% 100%) 0 0/220% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:name-in 1.15s .12s cubic-bezier(.16,1,.3,1) backwards,sheen 11s ease-in-out 1.2s infinite}
-@keyframes sheen{0%,100%{background-position:100% 0}50%{background-position:0 0}}
+/* The name is flat --fg at weight 500. It used to carry a gradient with a colour band
+   travelling across it, driven by the `sheen` keyframes: --fg at the edges, --greet-1 and
+   --greet-2 mixed by --greet-mix in the middle, on a 220% background clipped to the text.
+   All of that goes with the gradient - background, background-clip, the transparent fill
+   and the sheen - leaving a solid colour and the entrance animation. The keyframes are
+   deleted below rather than left behind: nothing else on the page references them. */
+.hero-name{font-size:clamp(3.4rem,11vw,8rem);font-weight:500;letter-spacing:-.045em;line-height:.95;margin:0 0 1.4rem;color:var(--fg);animation:name-in 1.15s .12s cubic-bezier(.16,1,.3,1) backwards}
 .hero-role{font:400 clamp(1.15rem,2.4vw,1.6rem)/1.5 var(--sans);max-width:30ch;margin:0;color:color-mix(in srgb,var(--fg) calc(86% * var(--dim)),transparent);animation:hero-rise .7s .18s cubic-bezier(.16,1,.3,1) both}
-.hero-role::before{content:"";display:block;width:48px;height:2px;background:var(--accent-solid);margin-bottom:1.2rem}
+/* 1px, not 2px, and --rule-line rather than --accent-solid: it is a mark, not a control. */
+.hero-role::before{content:"";display:block;width:48px;height:1px;background:var(--rule-line);margin-bottom:1.2rem}
 .hero-greeting{margin:1.9rem 0 0;font-weight:300;letter-spacing:-.02em;font-size:clamp(2rem,4.2vw,2.7rem);line-height:1.15;transition:opacity .35s,transform .35s,color .5s;animation:hero-rise .7s .28s cubic-bezier(.16,1,.3,1) backwards}
 .hero-greeting.swap{opacity:0;transform:translateY(6px)}
 
@@ -30,7 +28,6 @@
    Additive blending (the script's data-theme="dark" branch) is what makes the filaments
    brighten where they cross, so the element itself stays transparent. */
 .hero-wave{position:absolute;inset:0;z-index:0;width:100%;height:100%;pointer-events:none;transition:opacity .6s var(--ease)}
-[data-theme=light] body.transitioned .hero-wave{opacity:0}
 
 .scroll-cue{position:absolute;bottom:2.6rem;left:var(--edge);z-index:1;transition:opacity .4s}
 [data-theme=light] body.transitioned .scroll-cue{opacity:0}

@@ -16,12 +16,21 @@
 @property --dim{syntax:'<number>';inherits:true;initial-value:1}
 
 :root{
+  /* --accent is the glow triplet only. It is deliberately NOT slate, and deliberately not
+     the same colour as the fills: it drives the project and skills glows and the timeline
+     dot's halo, and those are soft light rather than surface. Keeping them indigo means a
+     warm glow still reads against a cool slate page. */
   --accent:124,137,255;
   /* Two accents, because one can't serve both themes: a fill needs to be dark enough for
      white text on top (4.5:1), while accent-coloured *text* needs to be light enough to
      read on the dark background. #5D6BEE was 4.37 / 4.15 - failing both ways. */
-  --accent-solid:#5563E9;   /* fills, borders, rules, dots - always carries white text */
-  --accent-ink:#8E99FF;     /* accent-coloured text on the dark background */
+  --accent-solid:#4A5568;   /* fills, borders, rules, dots - white text sits at 7.53:1 */
+  --accent-ink:#9AA8C0;     /* accent-coloured text on the dark background - 7.44:1 */
+  /* The rules - the hero's short mark and the one after each section heading. A third
+     value because they are not accent surfaces: nothing about them is interactive, so
+     they should not ride --accent-solid with the buttons. Dialled back well below white;
+     a brighter neutral competed with the headings above it. */
+  --rule-line:#949ca6;
   --max:740px;
   --edge:clamp(1.5rem,5vw,4rem);
   --ease:cubic-bezier(.65,0,.35,1);
@@ -40,7 +49,12 @@
      js/herowave.js. Change them here and both follow. */
   --greet-1:#8E99FF;
   --greet-2:#FF7FA8;
-  --greet-3:#3FDDD1;
+  /* Was #3FDDD1, a teal. Cyan disappeared against both grounds - it was the one
+     colour in the set that read as cold rather than as part of the palette. #A56BFF is the
+     violet the footer wordmark gradient already runs through, so the greeting, the hero
+     name and the wordmark now share one palette instead of the wordmark carrying a colour
+     nothing else has. */
+  --greet-3:#A56BFF;
   /* Hero wave (js/herowave.js): a global alpha dial so the whole ribbon can be turned up or
      down in one place. Its three colour stops are the --greet-* values above, not a copy. */
   --wave-alpha:1;
@@ -52,8 +66,8 @@ html{scroll-behavior:smooth;scroll-padding-top:5rem;color-scheme:dark}
 /* body carries the hero's dark ground, which is also the whole dark theme. The scroll flip
    to the light palette is scoped to [data-theme=light], so dark mode stays dark from the
    first pixel to the last - there is no halfway state to be caught in. */
-body{--bg:#1c1c23;--fg:#e9e6df;--dim:.9;margin:0;background:var(--bg);color:var(--fg);font:400 18px/1.75 var(--sans);-webkit-font-smoothing:antialiased;transition:--bg .6s var(--ease),--fg .6s var(--ease),--greet-mix .6s var(--ease)}
-[data-theme=light] body.transitioned{--bg:#faf9f6;--fg:#141414;--dim:1;color-scheme:light;--accent-ink:#5563E9;--greet-mix:55%}
+body{--bg:#17171a;--fg:#e7e7e5;--dim:.9;margin:0;background:var(--bg);color:var(--fg);font:400 18px/1.75 var(--sans);-webkit-font-smoothing:antialiased;transition:--bg .6s var(--ease),--fg .6s var(--ease),--greet-mix .6s var(--ease)}
+[data-theme=light] body.transitioned{--bg:#faf9f6;--fg:#141414;--dim:1;color-scheme:light;--accent-ink:#4A5568;--rule-line:#141414;--greet-mix:55%}
 h1,h2,h3{font-family:var(--sans);text-wrap:balance}
 a{color:inherit}
 :focus-visible{outline:2px solid var(--accent-solid);outline-offset:4px}
@@ -89,5 +103,17 @@ p:last-child{margin-bottom:0}
   .btn-cv-primary:hover{border-color:var(--accent-solid);color:#fff;box-shadow:none}
 }
 
-/* Scroll progress */
-.progress{position:fixed;top:0;left:0;width:100%;height:3px;transform-origin:0 50%;transform:scaleX(var(--sp,0));background:var(--accent-solid);z-index:101;pointer-events:none;will-change:transform}
+/* Scroll progress. A gradient across the greeting palette rather than a flat --accent-solid,
+   so the one fixed element at the top of the page carries colour rather than slate. It uses
+   the same three stops and the same --greet-mix treatment as the email underline, so the two
+   agree in both themes. All three are non-cyan: --greet-3 was the teal #3FDDD1 and is now the
+   violet #A56BFF, matching the wordmark gradient.
+
+   The bar grows with scaleX, which scales its background too - so the gradient's full range
+   is always visible, just compressed into whatever length the bar currently is. That reads
+   as progression rather than as a colour being consumed. */
+.progress{position:fixed;top:0;left:0;width:100%;height:3px;transform-origin:0 50%;transform:scaleX(var(--sp,0));z-index:101;pointer-events:none;will-change:transform;
+  background-image:linear-gradient(90deg,
+    color-mix(in srgb,var(--greet-1) calc(100% - var(--greet-mix)),var(--fg)) 0%,
+    color-mix(in srgb,var(--greet-2) calc(100% - var(--greet-mix)),var(--fg)) 50%,
+    color-mix(in srgb,var(--greet-3) calc(100% - var(--greet-mix)),var(--fg)) 100%)}

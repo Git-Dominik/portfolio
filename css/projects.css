@@ -3,19 +3,28 @@
 .project-card{position:relative;padding:clamp(2.2rem,5.5vw,3.6rem);border:1px solid color-mix(in srgb,var(--fg) 14%,transparent);border-radius:0;background:color-mix(in srgb,var(--fg) 3%,transparent);overflow:hidden;isolation:isolate;will-change:transform}
 .project-card-glow{position:absolute;top:-140px;right:-120px;width:340px;height:340px;background:radial-gradient(circle,rgba(124,137,255,.38) 0,rgba(255,120,150,.2) 45%,transparent 72%);filter:blur(60px);pointer-events:none;z-index:-1;animation:glow 20s ease-in-out infinite}
 @keyframes glow{0%,100%{transform:none}50%{transform:translate(-18px,20px) scale(1.1)}}
-.project-eyebrow{font:700 .78rem var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink);margin-bottom:.9rem}
+/* Dimmed white like the .skill-panel .label group names, and at the same 66% so the two
+   read as one family. The card glow is the only thing that could undercut it: it is
+   anchored top-right and this label is top-left, so they do not meet at any card width
+   from ~600px up. Below ~420px they overlap by the blur's fringe rather than its peak,
+   which still clears 4.68:1 against a 66% label in dark mode. */
+.project-eyebrow{font:700 .78rem var(--sans);letter-spacing:.08em;text-transform:uppercase;color:color-mix(in srgb,var(--fg) calc(66% * var(--dim)),transparent);margin-bottom:.9rem}
 .project-title{font-size:clamp(2rem,4.6vw,2.6rem);letter-spacing:-.02em;margin:0 0 .9rem}
 .project-card p{color:color-mix(in srgb,var(--fg) calc(86% * var(--dim)),transparent);max-width:54ch}
 .project-tags{margin:1.3rem 0 1.5rem}
 .project-actions{display:flex;flex-wrap:wrap;align-items:center;gap:1.5rem}
-.btn-primary{display:inline-flex;background:var(--accent-solid);color:#fff;font:700 .92rem var(--sans);letter-spacing:.01em;padding:.8rem 1.5rem;border-radius:0;text-decoration:none;transition:transform var(--press) var(--out),box-shadow .2s;-webkit-tap-highlight-color:transparent}
+/* Ghost, matching .btn-cv on the hero - same transparent fill, the same 28% --fg border,
+   the same weight, and the same hover, which lifts the border and colour rather than
+   filling. It was an --accent-solid fill, which under the slate palette put the only
+   slate-filled control on the page next to four ghost ones. */
+.btn-primary{display:inline-flex;align-items:center;background:transparent;color:var(--fg);border:1px solid color-mix(in srgb,var(--fg) 28%,transparent);font:700 .92rem var(--sans);letter-spacing:.01em;padding:.8rem 1.5rem;border-radius:0;text-decoration:none;transition:transform var(--press) var(--out),color .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
 .btn-primary:active{transform:translateY(0) scale(.97)}
-.btn-primary:focus-visible{outline-color:#fff}
-.btn-primary:hover,.btn-primary:focus-visible{transform:translateY(-2px);box-shadow:0 12px 26px -12px color-mix(in srgb,var(--accent-solid) 65%,transparent)}
+.btn-primary:focus-visible{outline-color:var(--accent-ink)}
+.btn-primary:hover,.btn-primary:focus-visible{transform:translateY(-2px);border-color:var(--fg);color:var(--fg)}
 .project-more-link{font:.92rem var(--sans);text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--fg) 35%,transparent);text-underline-offset:3px}
 .project-more-link:hover{text-decoration-color:var(--accent-ink)}
 @media(hover:none){
-  .btn-primary:hover{transform:none;box-shadow:none}
+  .btn-primary:hover{transform:none;border-color:color-mix(in srgb,var(--fg) 28%,transparent);color:var(--fg)}
   .project-more-link:hover{text-decoration-color:color-mix(in srgb,var(--fg) 35%,transparent)}
 }
 @media(max-width:480px){.project-card{padding:1.7rem}.project-card-glow{width:220px;height:220px;top:-90px;right:-80px}}
@@ -38,15 +47,23 @@
    three siblings on one row - a fixed 12.5rem name column beside the summary - which broke
    the rhythm the moment a project name was longer than that column. */
 .proj-labels{display:flex;flex-direction:column;gap:.1rem;min-width:0}
-.proj-name{font:700 1.15rem var(--sans);letter-spacing:-.01em;transition:color .2s;overflow-wrap:anywhere}
+/* Dimmed at rest and brought UP to full --fg on hover, rather than the old arrangement
+   of full --fg going to --accent-ink. Accent-ink is slate under this palette, and a
+   title that dims on hover reads as de-emphasised, not as interactive.
+
+   The open state does the same. It also used to go to --accent-ink, which contradicted
+   the rule above it: opening a project made the title DARKER than leaving it closed, so
+   the row you had chosen read as the one you had not. Both states now land on full --fg,
+   and it is the + rotating to a cross that carries which one is open. */
+.proj-name{font:700 1.15rem var(--sans);letter-spacing:-.01em;color:color-mix(in srgb,var(--fg) calc(84% * var(--dim)),transparent);transition:color .2s;overflow-wrap:anywhere}
 /* The summary wraps instead of truncating; an ellipsis would hide the one line that
    says what the project actually is. */
 .proj-sum{font:.92rem var(--sans);color:color-mix(in srgb,var(--fg) calc(64% * var(--dim)),transparent);overflow-wrap:anywhere}
 .proj-plus{position:relative;width:14px;height:14px;transition:transform .4s var(--out)}
 .proj-plus::before,.proj-plus::after{content:"";position:absolute;left:0;top:6px;width:14px;height:2px;background:currentColor}
 .proj-plus::after{transform:rotate(90deg)}
-.proj-head:hover .proj-name{color:var(--accent-ink)}
-.proj-row.is-open .proj-name{color:var(--accent-ink)}
+.proj-head:hover .proj-name{color:var(--fg)}
+.proj-row.is-open .proj-name{color:var(--fg)}
 .proj-row.is-open .proj-plus{transform:rotate(45deg)}
 .proj-body{display:grid;grid-template-rows:0fr;visibility:hidden;transition:grid-template-rows .45s var(--out),visibility 0s .45s}
 .proj-row.is-open .proj-body{grid-template-rows:1fr;visibility:visible;transition-delay:0s}

@@ -11,6 +11,10 @@
   --node:13px;        /* the dot's diameter; also the segment start offset, /2 */
   --track:2px;
   --gap:2.8rem;       /* space after an entry, bridged by its own segment */
+  /* The cursor's outline. A fixed near-black rather than --bg: the ring has to read against
+     BOTH the filled segment and the unfilled rail, and those are near-opposites once the
+     fill is --fg. --bg is light in light mode, where the ring is needed most. */
+  --dot-ring:#141414;
   /* Where the line lives, and where a dot must sit to be centred on it. This is the bit
      that is easy to get wrong: .exp is position:relative and carries padding-left:var(--rail),
      and an absolutely positioned child's 'left' resolves against the containing block's
@@ -42,12 +46,34 @@
 .exp-entry::after{
   z-index:1;
   height:calc(var(--p,0) * 100%);
-  background:var(--accent-solid);
+  /* --fg dimmed to 62%. Full --fg read as a solid bar rather than as progress.
+
+     The floor here is 3:1, not 4.5:1. This fill is a graphic object conveying information,
+     so WCAG 1.4.11 (non-text contrast) governs it; 1.4.3 is the text rule and does not
+     apply. 56% is the DIMMEST value that still clears 3:1 in both themes - it holds
+     3.13:1 dark and 3.09:1 light against the unfilled rail, and 54% breaks both.
+
+     That is a hard floor rather than a preference, and it cannot be engineered around by
+     dimming the rail too: the fill and the rail converge as the fill dims, so in light
+     mode a dimmer fill moves TOWARD the near-white rail and contrast falls either way.
+     Below 56% the progress step simply stops being reliably distinguishable.
+
+     Not subject to the .78 multiplier on .exp-body: the fill is a pseudo-element of
+     .exp-entry, which sits OUTSIDE that div, so this percentage is the whole story. */
+  background:color-mix(in srgb,var(--fg) calc(56% * var(--dim)),transparent);
 }
-/* Nothing follows the last entry, so it gets no segment at all - the dot comes to rest on
-   the end of the one before it. */
-.exp-entry:last-child::before,
-.exp-entry:last-child::after{display:none}
+/* The last entry gets a segment too. It used to be display:none, on the reasoning that
+   nothing follows it so there is nothing to bridge to - but that left the track visibly
+   a segment short, and the dot came to rest on the end of the previous one with the line
+   stopping at its feet.
+
+   Every other entry spans from its node line to the NEXT entry's node line, which is why
+   its length is just its own height. The last entry has no next one, so the only length
+   available is its own height less the half-dot offset - hence the explicit height rather
+   than the negative bottom used above. Its fill scales to that same length, or it would
+   run half a dot past the end of the timeline. */
+.exp-entry:last-child::before{bottom:auto;height:calc(100% - var(--node)/2)}
+.exp-entry:last-child::after{height:calc(var(--p,0) * (100% - var(--node)/2))}
 
 /* The open entry is a placeholder, not a role, so its track stays dashed rather than
    filled. */
@@ -56,7 +82,7 @@
 
 /* --- The dot -------------------------------------------------------------
    White core with an accent ring and glow. NOT a var(--bg) ring: that was tried to separate
-   the dot from the fill passing behind it, but in the dark theme --bg is #1c1c23, so it read
+   the dot from the fill passing behind it, but in the dark theme --bg is near-black, so it read
    as a black halo rather than as an outline. The white core plus a translucent accent ring
    separates it just as well and keeps the accent the only colour on the mark.
 
@@ -77,24 +103,51 @@
   height:var(--node);
   transform:translate(-50%,-50%);
   border-radius:50%;
+  /* White core, dark ring, and the ring is load-bearing. Now that the fill is --fg the two
+     grounds the dot travels over have become near-opposites - bright where it has passed,
+     dim where it has not - so no single colour can read on both. Core-over-rail and
+     ring-over-fill are the two that hold up:
+
+       dark  over FILL  core 1.24:1   ring 14.88:1  -> reads via the ring
+       dark  over RAIL  core 12.40:1  ring  1.49:1  -> reads via the core
+       light over FILL  core 18.42:1  ring  1.00:1  -> reads via the core
+       light over RAIL  core  1.41:1  ring 13.04:1  -> reads via the ring
+
+     This also fixes a bug that was already there. Light mode painted the dot --accent-solid
+     and the fill --accent-solid too, i.e. the same value, so the marker was invisible for
+     exactly as long as it sat on a filled segment. */
   background:#fff;
-  box-shadow:0 0 0 3px rgba(var(--accent),.35),0 0 16px 2px rgba(var(--accent),.5);
+  box-shadow:0 0 0 2px var(--dot-ring);
 }
 
 /* --- Content ------------------------------------------------------------- */
 .exp-body{transition:opacity .45s}
-/* De-emphasised, not disabled: a faded grey failed contrast on the light theme. */
-.exp[data-state="live"] .exp-entry:not(.is-passed) .exp-body{opacity:.62}
-.exp-when{font:700 .82rem var(--sans);letter-spacing:.02em;color:var(--accent-ink);margin:0 0 .35rem}
+/* De-emphasised, not disabled: a faded grey failed contrast on the light theme.
+   .78, not the .62 this used to be. At .62 every unpassed entry was multiplied
+   down on top of its own colour, which put the skill tags at 3.34:1 and the role
+   line at 3.12:1 - both under the 4.5:1 floor, and unreadable before you scrolled
+   to them. The multiplier was the cause, not the greys underneath it, so that is
+   what moved; .78 keeps the de-emphasis obvious while everything clears. */
+.exp[data-state="live"] .exp-entry:not(.is-passed) .exp-body{opacity:.78}
+/* Dimmed white rather than the slate --accent-ink, matching the .skill-panel .label and
+   .project-eyebrow group names.
+
+   78% rather than their 66%, and the gap is the .78 opacity on line 108: .exp-when sits
+   INSIDE .exp-body in the markup, so an unpassed entry dims it twice over. At 66% the
+   unpassed date lands at 4.02:1 dark and 3.60:1 light - unreadable, not merely soft.
+   78% is the dimmest level that still clears 4.5:1 in both themes in both states
+   (5.11 dark / 4.87 light unpassed). It happens to match .exp-body p exactly, which is
+   the line directly below it anyway. */
+.exp-when{font:700 .82rem var(--sans);letter-spacing:.02em;color:color-mix(in srgb,var(--fg) calc(78% * var(--dim)),transparent);margin:0 0 .35rem}
 .exp-body h3{font-size:1.4rem;letter-spacing:-.01em;margin:0 0 .2rem}
-.exp-role{font:.92rem var(--sans);color:color-mix(in srgb,var(--fg) calc(68% * var(--dim)),transparent);margin:0 0 .9rem}
+.exp-role{font:.92rem var(--sans);color:color-mix(in srgb,var(--fg) calc(74% * var(--dim)),transparent);margin:0 0 .9rem}
 .exp-body p{color:color-mix(in srgb,var(--fg) calc(88% * var(--dim)),transparent)}
 /* .project-tags is declared here, not in projects.css - the projects section has always
    borrowed this rule. Moving it is a separate change; leaving it split would silently drop
    the flex layout on the project card's tags. */
 .exp-tags,.project-tags{display:flex;flex-wrap:wrap;gap:.5rem}
 .exp-tags{margin-top:1.1rem}
-.tag{font:.78rem var(--sans);letter-spacing:.02em;padding:.3rem .7rem;border:1px solid color-mix(in srgb,var(--fg) 18%,transparent);color:color-mix(in srgb,var(--fg) calc(72% * var(--dim)),transparent)}
+.tag{font:.78rem var(--sans);letter-spacing:.02em;padding:.3rem .7rem;border:1px solid color-mix(in srgb,var(--fg) 18%,transparent);color:color-mix(in srgb,var(--fg) calc(92% * var(--dim)),transparent)}
 /* A chip that carries a technology icon. Same pill as above, just with room for a glyph. */
 .tag-icon{display:inline-flex;align-items:center;gap:.45rem}
 .tag-icon i{font-size:1.05rem;line-height:1;flex:none}

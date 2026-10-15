@@ -11,7 +11,19 @@ footer{max-width:var(--max);margin:0 auto;padding:3rem var(--edge) 3.5rem;font:.
 .contact-grid{display:grid;gap:2.2rem}
 .mail-row{display:flex;flex-wrap:wrap;align-items:center;gap:.8rem 1rem;margin-top:1.6rem}
 /* overflow-wrap, not word-break:break-all - a break-all mangles the address at any width. */
-.mail{font:300 clamp(1.35rem,3.4vw,2rem)/1.15 var(--sans);letter-spacing:-.005em;text-decoration:none;border-bottom:3px solid var(--accent-solid);padding-bottom:.15rem;overflow-wrap:anywhere;transition:color .2s}
+/* The underline is a gradient that sweeps, not a static rule. The whole band is colour -
+   no flat ends - and the tile runs indigo to pink and back to indigo, so it is identical
+   at both edges and tiles butt together invisibly. Shifting by exactly one tile per
+   cycle means there is no reset to see. y is pinned to 100% so the band stays under the
+   link rather than at the top of it. */
+.mail{font:300 clamp(1.35rem,3.4vw,2rem)/1.15 var(--sans);letter-spacing:-.005em;text-decoration:none;border-bottom:0;padding-bottom:.15rem;overflow-wrap:anywhere;transition:color .2s;
+  background-image:linear-gradient(90deg,
+    color-mix(in srgb,var(--greet-1) calc(100% - var(--greet-mix)),var(--fg)) 0%,
+    color-mix(in srgb,var(--greet-2) calc(100% - var(--greet-mix)),var(--fg)) 50%,
+    color-mix(in srgb,var(--greet-1) calc(100% - var(--greet-mix)),var(--fg)) 100%);
+  background-size:1000px 3px;background-repeat:repeat-x;background-position:0 100%;
+  animation:mail-sweep 6s linear infinite}
+@keyframes mail-sweep{from{background-position:0 100%}to{background-position:-1000px 100%}}
 .mail:hover{color:var(--accent-ink)}
 .copy,.top{font:600 .85rem var(--sans);color:var(--fg);background:transparent;border:1px solid color-mix(in srgb,var(--fg) 28%,transparent);padding:.5rem 1rem;border-radius:0;cursor:pointer;transition:background .2s,color .2s,border-color .2s,transform var(--press) var(--out);-webkit-tap-highlight-color:transparent}
 .copy:active,.top:active{transform:scale(.97)}

@@ -6,3 +6,9 @@ skills-lock.json
 .DS_Store
 Thumbs.db
 node_modules/
+
+# Local design prototypes. Palette and layout scratch built to compare options side by
+# side - exploration, not part of the site. Underscore-prefixed so they never collide
+# with a real page.
+_proto-*.html
+_schemes/

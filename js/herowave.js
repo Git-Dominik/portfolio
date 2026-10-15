@@ -36,6 +36,13 @@
     glowEvery: 5, glowHw: 3.5,
     fadeY: 0.5, fadeR: 1, fadeAmt: 0,
     alpha: 1, speed: 1, scroll: 0.0011,
+    /* The hero ribbon is no longer hidden on the light theme. Its strand alpha was written
+       for additive blending on a dark ground, where 3-5% per strand accumulates as the
+       strands overlap. Under source-over on near-white nothing accumulates and the whole
+       ribbon washes out, so light gets a multiplier on the same curve - the same trick the
+       closing block's light config uses, just applied at draw time so one config covers
+       both themes. */
+    alphaLight: 2.2,
     colors: null, fallback2D: true, themeBlend: true
   };
 
@@ -257,6 +264,17 @@
     }
     setBlend();
 
+    /* Per-theme alpha multiplier, if the config asks for one. Read every frame rather than
+       captured at setup, so flipping the theme takes effect on the next draw. */
+    function alphaNow() {
+      var light = document.documentElement.getAttribute('data-theme') === 'light';
+      return waveAlphaNow() * cfg.alpha * (light && cfg.alphaLight ? cfg.alphaLight : 1);
+    }
+    function waveAlphaNow() {
+      return parseFloat(getComputedStyle(document.documentElement)
+        .getPropertyValue('--wave-alpha')) || 1;
+    }
+
     var posBuf = gl.createBuffer();
     var metaBuf = gl.createBuffer();
     var idxBuf = gl.createBuffer();
@@ -358,9 +376,6 @@
       if (sizeChanged) draw(phase);
     }
 
-    // --wave-alpha stays the one global dial; cfg.alpha is the per-instance trim on top.
-    var waveAlpha = parseFloat(getComputedStyle(document.documentElement)
-      .getPropertyValue('--wave-alpha')) || 1;
 
     // Read off cfg every frame rather than capturing the stops once. The closing block
     // swaps its whole config when the theme flips, and a captured copy would leave it
@@ -379,7 +394,7 @@
       gl.uniform3f(uRgb1, c[0][0], c[0][1], c[0][2]);
       gl.uniform3f(uRgb2, c[1][0], c[1][1], c[1][2]);
       gl.uniform3f(uRgb3, c[2][0], c[2][1], c[2][2]);
-      gl.uniform1f(uAlpha, waveAlpha * cfg.alpha);
+      gl.uniform1f(uAlpha, alphaNow());
       gl.uniform1f(uFadeY, cfg.fadeY);
       gl.uniform1f(uFadeR, cfg.fadeR);
       gl.uniform1f(uFadeAmt, cfg.fadeAmt);
@@ -430,7 +445,7 @@
     for (var i = 0; i < 3; i++) {
       rgb[i] = parseColor(cs.getPropertyValue('--greet-' + (i + 1)), rgb[i]);
     }
-    var alphaScale = (parseFloat(cs.getPropertyValue('--wave-alpha')) || 1) * cfg.alpha;
+
 
     var W = 0, H = 0, lines = 112, STEP = 6, grad = null, cen = [], th = [];
     var toRGB = function (i) { return rgb[i].map(function (v) { return Math.round(v * 255); }).join(','); };
@@ -473,6 +488,11 @@
       for (i = 0; i < lines; i++) {
         var u = i / (lines - 1);
         var edge = 1 - Math.abs(u - 0.5) * 2;
+        // Recomputed per frame so a theme flip is picked up; the light multiplier matches
+        // the WebGL path's alphaNow() so the fallback matches the real renderer.
+        var light = document.documentElement.getAttribute('data-theme') === 'light';
+        var alphaScale = (parseFloat(getComputedStyle(document.documentElement)
+          .getPropertyValue('--wave-alpha')) || 1) * cfg.alpha * (light && cfg.alphaLight ? cfg.alphaLight : 1);
         var a = (0.022 + 0.15 * Math.pow(1 - edge, 1.5) + 0.03 * edge) * alphaScale;
         var glow = i % cfg.glowEvery === 0;
         ctx.globalAlpha = glow ? a * 0.28 : a;

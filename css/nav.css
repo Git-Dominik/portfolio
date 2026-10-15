@@ -2,22 +2,45 @@
 /* Three equal side columns so the links are genuinely centred. space-between can't do
    this: it distributes the leftover space, and the right-hand cluster (CV + GitHub +
    language switch) is wider than the logo, so the links drifted ~80px left of centre. */
-.site-nav{position:fixed;inset:0 0 auto 0;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;padding:1.4rem var(--edge);z-index:100;color:#fff;mix-blend-mode:difference;-webkit-tap-highlight-color:transparent}
-.nav-logo{justify-self:start;font:700 1.05rem var(--sans);text-decoration:none;letter-spacing:-.02em}
+/* GLASS. This bar used to be mix-blend-mode:difference with white text - an inversion
+   trick that made the nav legible over the light sections without following the theme. It
+   cannot carry a frosted backdrop: the blend applies to the whole element, so the blur
+   would be differenced too and the result would not read as glass. So the blend is gone
+   and the nav follows the theme through --fg instead, which is what every other surface
+   on the page already does.
+
+   The panel is tinted from --bg rather than a literal, so it frosts dark over the dark
+   hero and cream over the light sections without a second rule. backdrop-filter is given
+   -webkit- too: Safari needs both, and without the prefix the bar is simply a flat tint
+   there rather than frosted.
+
+   52% tint, and no hairline under it. The tint can afford to go this low because it only
+   has to carry the nav text over surfaces this page can actually put behind a fixed bar -
+   its own floors, the ground, and the brightest panel fill - and over that set the worst
+   case is still above 12:1 in both themes. It only drops under 4.5:1 against something
+   near-white in dark mode, which this page never renders behind the nav. */
+.site-nav{position:fixed;inset:0 0 auto 0;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;padding:1rem var(--edge);z-index:100;color:var(--fg);-webkit-tap-highlight-color:transparent;
+  background:color-mix(in srgb,var(--bg) 52%,transparent);
+  -webkit-backdrop-filter:blur(14px) saturate(1.6);
+  backdrop-filter:blur(14px) saturate(1.6)}
+/* 0.95rem, not the 1.05rem the single initial wore. The full name needs ~160px at 1.05rem,
+   but the left 1fr column is only ~155px wide at the 980px breakpoint - the last width still
+   on the desktop bar. minmax(0,1fr) lets the column shrink silently past its content, so an
+   oversized logo would not reflow the layout, it would just collide with the centre links. */
+.nav-logo{justify-self:start;font:700 .95rem var(--sans);text-decoration:none;letter-spacing:-.02em;white-space:nowrap}
 .nav-links{display:flex;gap:1.8rem;justify-self:center}
 .nav-links a{font:.92rem var(--sans);text-decoration:none;letter-spacing:.01em;padding-bottom:2px;border-bottom:1px solid transparent;transition:border-color .25s,color .25s;white-space:nowrap}
-.nav-links a.active{color:rgba(255,255,255,.9)}
+.nav-links a.active{color:var(--fg)}
 .nav-links a:focus-visible{outline:2px solid currentColor;outline-offset:5px}
 .nav-right{display:flex;align-items:center;gap:1.2rem;justify-self:end}
 .lang-switch{display:flex;gap:.9rem}
-.lang-switch button{background:none;border:0;color:rgba(255,255,255,.55);font:.82rem var(--sans);cursor:pointer;padding:.2rem 0;letter-spacing:.03em;transition:color .2s;position:relative}
+.lang-switch button{background:none;border:0;color:color-mix(in srgb,var(--fg) calc(55% * var(--dim)),transparent);font:.82rem var(--sans);cursor:pointer;padding:.2rem 0;letter-spacing:.03em;transition:color .2s;position:relative}
 .lang-switch button:focus-visible{outline:2px solid currentColor;outline-offset:4px}
 
-/* Theme toggle. The nav is blended with difference so it inverts over the light sections,
-   which means this button must keep the same colour behaviour as its neighbours rather
-   than carrying a background of its own. */
-.theme-toggle{display:flex;align-items:center;justify-content:center;width:28px;height:28px;padding:0;border:0;background:none;color:rgba(255,255,255,.62);cursor:pointer;transition:color .2s,transform var(--press) var(--out);-webkit-tap-highlight-color:transparent}
-.theme-toggle:hover{color:rgba(255,255,255,.92)}
+/* Theme toggle. It carries no background of its own so it keeps matching its neighbours
+   across the frosted panel. */
+.theme-toggle{display:flex;align-items:center;justify-content:center;width:28px;height:28px;padding:0;border:0;background:none;color:color-mix(in srgb,var(--fg) calc(62% * var(--dim)),transparent);cursor:pointer;transition:color .2s,transform var(--press) var(--out);-webkit-tap-highlight-color:transparent}
+.theme-toggle:hover{color:var(--fg)}
 .theme-toggle:active{transform:scale(.92)}
 .theme-toggle:focus-visible{outline:2px solid currentColor;outline-offset:3px}
 .theme-toggle svg{width:17px;height:17px;fill:currentColor}
@@ -26,7 +49,7 @@
 .theme-toggle .icon-moon{display:none}
 [data-theme=dark] .theme-toggle .icon-sun{display:none}
 [data-theme=dark] .theme-toggle .icon-moon{display:block}
-@media(hover:none){.theme-toggle:hover{color:rgba(255,255,255,.62)}}
+@media(hover:none){.theme-toggle:hover{color:color-mix(in srgb,var(--fg) calc(62% * var(--dim)),transparent)}}
 /* Visually hidden but still announced - the SVG is aria-hidden, so without this the button
    would have no accessible name at all. */
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
@@ -38,27 +61,25 @@ body.nav-open .nav-toggle span:nth-child(1){transform:translateY(7px) rotate(45d
 body.nav-open .nav-toggle span:nth-child(2){opacity:0}
 body.nav-open .nav-toggle span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
 /* Hover treatment applies everywhere except a device that genuinely has no pointer. */
-.lang-switch button.active,.lang-switch button:hover,.lang-switch button:focus-visible{color:#fff}
+.lang-switch button.active,.lang-switch button:hover,.lang-switch button:focus-visible{color:var(--fg)}
 
 /* The desktop bar needs ~940px before the links collide with the CV/GitHub/language
    cluster (widest case is Polish, at 804px of content). The old 720px breakpoint let it
    overlap itself across a 220px band of widths, so the menu takes over earlier. */
 @media(max-width:980px){
   .nav-toggle{display:flex}
-  /* The nav is blended with difference so it inverts over the light sections. That blend
-     applies to the whole nav group, which cancelled out the menu panel's own background;
-     the hero read straight through it. While the menu is open the nav drops the blend and
-     becomes a real surface. */
-  body.nav-open .site-nav{mix-blend-mode:normal;background:var(--bg);box-shadow:0 10px 24px -18px rgba(0,0,0,.8)}
-  /* Without the difference blend the nav carries its own colour, so it has to follow the
-     theme: white text on the cream background is invisible. */
-  body.nav-open .site-nav{color:var(--fg)}
+  /* The open menu only needs depth - the bar is already a themed frosted surface, so this
+     no longer has to replace its background. */
+  body.nav-open .site-nav{box-shadow:0 10px 24px -18px rgba(0,0,0,.8)}
   body.nav-open .nav-cv{border-color:color-mix(in srgb,var(--fg) 40%,transparent)}
   body.nav-open .lang-switch button{color:color-mix(in srgb,var(--fg) calc(58% * var(--dim)),transparent)}
   body.nav-open .lang-switch button.active{color:var(--fg)}
   /* justify-self would otherwise shrink this to its content width once it's an
      absolutely-positioned grid item. */
-  .nav-links{display:none;position:absolute;top:100%;left:0;right:0;justify-self:stretch;flex-direction:column;gap:0;padding:.5rem var(--edge) 1.4rem;background:var(--bg);border-bottom:1px solid color-mix(in srgb,var(--fg) 14%,transparent);box-shadow:0 18px 30px -22px rgba(0,0,0,.65);mix-blend-mode:normal;isolation:isolate}
+  /* Deliberately opaque, not frosted: a backdrop-filter nested inside the bar's own
+     backdrop-filter samples the parent's already-filtered result, which differs between
+     engines. A menu panel also wants the legibility. */
+  .nav-links{display:none;position:absolute;top:100%;left:0;right:0;justify-self:stretch;flex-direction:column;gap:0;padding:.5rem var(--edge) 1.4rem;background:var(--bg);border-bottom:1px solid color-mix(in srgb,var(--fg) 14%,transparent);box-shadow:0 18px 30px -22px rgba(0,0,0,.65)}
   .nav-links a{color:var(--fg);padding:.95rem 0;border-bottom:1px solid color-mix(in srgb,var(--fg) 10%,transparent)}
   .nav-links a:last-child{border-bottom:0}
   .nav-links a.active{border-color:var(--accent-ink);color:var(--accent-ink)}
@@ -69,17 +90,17 @@ body.nav-open .nav-toggle span:nth-child(3){transform:translateY(-7px) rotate(-4
 
 .nav-gh{display:flex;color:inherit;opacity:.75;transition:opacity .2s}
 .nav-gh svg{width:20px;height:20px;fill:currentColor}
-.nav-cv{font:700 .74rem/1 var(--sans);letter-spacing:.09em;text-decoration:none;color:inherit;border:1px solid rgba(255,255,255,.4);border-radius:0;padding:.5rem .8rem;opacity:.8;transition:opacity .2s,background .2s,border-color .2s,transform var(--press) var(--out)}
+.nav-cv{font:700 .74rem/1 var(--sans);letter-spacing:.09em;text-decoration:none;color:inherit;border:1px solid color-mix(in srgb,var(--fg) 40%,transparent);border-radius:0;padding:.5rem .8rem;opacity:.8;transition:opacity .2s,background .2s,border-color .2s,transform var(--press) var(--out)}
 .nav-cv:active{transform:scale(.96)}
 .nav-gh:hover,.nav-gh:focus-visible{opacity:1}
-.nav-cv:hover,.nav-cv:focus-visible{opacity:1;background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.75)}
+.nav-cv:hover,.nav-cv:focus-visible{opacity:1;background:color-mix(in srgb,var(--fg) 14%,transparent);border-color:color-mix(in srgb,var(--fg) 75%,transparent)}
 
 /* Touch-only: a tap leaves :hover latched on, so hand these back to their resting state.
    Written as a reset rather than a gate - see the note in base.css. */
 @media(hover:none){
-  .nav-links a:hover{border-color:transparent;color:rgba(255,255,255,.9)}
-  .nav-links a.active{border-color:rgba(255,255,255,.6)}
-  .lang-switch button:hover{color:rgba(255,255,255,.55)}
+  .nav-links a:hover{border-color:transparent;color:var(--fg)}
+  .nav-links a.active{border-color:color-mix(in srgb,var(--fg) 60%,transparent)}
+  .lang-switch button:hover{color:color-mix(in srgb,var(--fg) calc(55% * var(--dim)),transparent)}
   .nav-gh:hover{opacity:.75}
-  .nav-cv:hover{opacity:.8;background:none;border-color:rgba(255,255,255,.4)}
+  .nav-cv:hover{opacity:.8;background:none;border-color:color-mix(in srgb,var(--fg) 40%,transparent)}
 }

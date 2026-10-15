@@ -42,19 +42,37 @@
        which paints the whole strip as nothing. On a tall hero that reads as a blank band
        rather than as content that has not arrived yet. It is decoration, not content, and
        a missing strip is worse than an un-revealed one. */
-    // [selector, mode, stagger between siblings (s), start delay (s)]
+    /* [selector, mode, stagger between siblings (s), start delay (s)]
+
+       Anything that answers the pointer is NOT in this list. The reveal writes transform
+       on the element itself - translate3d(0,var(--ry),0) scale(var(--rs,1)) - so any
+       element whose hover also drives transform is animating the same property from two
+       directions, and the pointer loses for as long as the reveal is armed. Four entries
+       were dropped for this:
+
+         .skill-tile      pop scaled the tile; :hover lifted it by -3px. Same property.
+         .project-card    ui.js drives transform for the pointer tilt. It was already
+                          guarded with `if(c.hasAttribute('data-r')) return`, so nothing
+                          broke - but the tilt stayed dead for the length of the reveal,
+                          which is the same complaint in slower form.
+         .contact-links   hover only swaps border and colour, no transform. Dropped for
+                          consistency: it sits beside .mail-row, which stays.
+         .wordmark        hover fades a CHILD (.fill), so it never actually conflicted.
+                          Dropped for the same consistency reason as .contact-links.
+
+       Re-adding one means re-checking whether its hover writes transform to the element
+       itself rather than to a descendant - hover on a child is safe, hover on the
+       revealed node is not. .proj-row is still here: it is click-to-open, not hovered. */
     [
       ['.eyebrow-heading', 'sweep'],
       ['.divider', 'line'],
       ['.lead,.lang-spoken,.quick-facts', 'sweep', .12, .1],
       ['.skill-panel', 'sweep', .1],
-      ['.skill-tile', 'pop', .05, .25],
       ['.exp-body', 'sweep'],
-      ['.project-card', 'sweep', 0, .1],
       ['.proj-more>.label', 'sweep'],
       ['.proj-row', 'sweep', .1, .05],
-      ['.contact-grid>div>p,.mail-row,.contact-links', 'sweep', .1],
-      ['.wordmark,.foot-row', 'sweep', .15]
+      ['.contact-grid>div>p,.mail-row', 'sweep', .1],
+      ['.foot-row', 'sweep', .15]
     ].forEach(function(s){
       var last = null, n = 0;
       $$(s[0]).forEach(function(el){

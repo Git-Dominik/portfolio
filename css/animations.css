@@ -1,5 +1,5 @@
 /* Load-in: a short hero intro, then every block is uncovered by a soft light sweep
-   (the same idea as the name's sheen). JS tags the elements, so nothing is hidden if it fails.
+   JS tags the elements, so nothing is hidden if it fails.
    Each element plays once and is then handed back to its normal styles. */
 
 /* Hero intro: nav drops in, name wipes on, the wave fades up behind it */
@@ -17,7 +17,7 @@
 [data-r=pop]{--rs:.88;transition:opacity .5s ease var(--d,0s),transform .85s var(--spring) var(--d,0s)}
 [data-r=line]{opacity:1;transform:scaleX(0);transform-origin:0 50%;transition:transform 1.5s var(--sweep) var(--d,0s)}
 
-/* Nothing on screen, nothing painting. The hero's sheen, the WebGL layers and the marquee
+/* Nothing on screen, nothing painting. The WebGL layers and the marquee
    all ran forever - including for the whole time the visitor was reading further down. */
 .hero.away,.hero.away *{animation-play-state:paused}
 .band-wrap.away .band-track{animation-play-state:paused}

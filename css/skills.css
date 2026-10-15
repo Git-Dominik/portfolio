@@ -1,9 +1,14 @@
 /* Skills: a small board. Backend leads (it's the focus); icons stay mono until you point at them. */
 .skill-board{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:.9rem}
 .skill-panel{position:relative;padding:1.2rem 1.2rem 1.3rem;border:1px solid color-mix(in srgb,var(--fg) 14%,transparent);border-radius:0;background:color-mix(in srgb,var(--fg) 3%,transparent);overflow:hidden;isolation:isolate}
-/* Panel labels in the accent, uppercase and tracked, matching .project-eyebrow. As dim grey
-   .label text they were the same weight as the body copy, which flattened the whole board. */
-.skill-panel .label{margin-bottom:.9rem;font:700 .74rem var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--accent-ink)}
+/* Panel labels, uppercase and tracked, matching .project-eyebrow in colour and level too -
+   both sit at a dimmed 66% --fg. They used to wear the accent; as accent they were the same
+   visual weight as the panel borders and the whole board read as one loud block.
+
+   66% is the dimmest level that still clears 4.5:1 on the panel fill in both themes at this
+   size (5.61:1 dark, 5.66:1 light); 54% falls under and would fail as small text. Carries
+   --dim so light mode dims the same way rather than inverting to a hard grey. */
+.skill-panel .label{margin-bottom:.9rem;font:700 .74rem var(--sans);letter-spacing:.14em;text-transform:uppercase;color:color-mix(in srgb,var(--fg) calc(66% * var(--dim)),transparent)}
 .skill-backend{grid-column:1/-1}
 .skill-backend::before{content:"";position:absolute;top:-110px;right:-80px;width:300px;height:300px;background:radial-gradient(circle,rgba(124,137,255,.34) 0,rgba(255,120,150,.18) 45%,transparent 72%);filter:blur(50px);z-index:-1;pointer-events:none}
 .skill-tiles{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:.6rem}
