@@ -3,16 +3,36 @@
    this: it distributes the leftover space, and the right-hand cluster (CV + GitHub +
    language switch) is wider than the logo, so the links drifted ~80px left of centre. */
 .site-nav{position:fixed;inset:0 0 auto 0;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;padding:1.4rem var(--edge);z-index:100;color:#fff;mix-blend-mode:difference;-webkit-tap-highlight-color:transparent}
-.nav-logo{justify-self:start;font:700 1.05rem var(--sans);text-decoration:none;letter-spacing:-.02em;border-radius:6px}
+.nav-logo{justify-self:start;font:700 1.05rem var(--sans);text-decoration:none;letter-spacing:-.02em}
 .nav-links{display:flex;gap:1.8rem;justify-self:center}
 .nav-links a{font:.92rem var(--sans);text-decoration:none;letter-spacing:.01em;padding-bottom:2px;border-bottom:1px solid transparent;transition:border-color .25s,color .25s;white-space:nowrap}
 .nav-links a.active{color:rgba(255,255,255,.9)}
-.nav-links a:focus-visible{outline:2px solid currentColor;outline-offset:5px;border-radius:3px}
+.nav-links a:focus-visible{outline:2px solid currentColor;outline-offset:5px}
 .nav-right{display:flex;align-items:center;gap:1.2rem;justify-self:end}
 .lang-switch{display:flex;gap:.9rem}
 .lang-switch button{background:none;border:0;color:rgba(255,255,255,.55);font:.82rem var(--sans);cursor:pointer;padding:.2rem 0;letter-spacing:.03em;transition:color .2s;position:relative}
-.lang-switch button:focus-visible{outline:2px solid currentColor;outline-offset:4px;border-radius:3px}
-.nav-toggle{display:none;flex-direction:column;justify-content:center;gap:5px;width:28px;height:28px;background:none;border:0;cursor:pointer;padding:0;color:inherit;border-radius:5px}
+.lang-switch button:focus-visible{outline:2px solid currentColor;outline-offset:4px}
+
+/* Theme toggle. The nav is blended with difference so it inverts over the light sections,
+   which means this button must keep the same colour behaviour as its neighbours rather
+   than carrying a background of its own. */
+.theme-toggle{display:flex;align-items:center;justify-content:center;width:28px;height:28px;padding:0;border:0;background:none;color:rgba(255,255,255,.62);cursor:pointer;transition:color .2s,transform var(--press) var(--out);-webkit-tap-highlight-color:transparent}
+.theme-toggle:hover{color:rgba(255,255,255,.92)}
+.theme-toggle:active{transform:scale(.92)}
+.theme-toggle:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+.theme-toggle svg{width:17px;height:17px;fill:currentColor}
+/* One glyph per theme. Both stay in the DOM; the label under them is the accessible name
+   and is rewritten on change, so the two cannot drift apart. */
+.theme-toggle .icon-moon{display:none}
+[data-theme=dark] .theme-toggle .icon-sun{display:none}
+[data-theme=dark] .theme-toggle .icon-moon{display:block}
+@media(hover:none){.theme-toggle:hover{color:rgba(255,255,255,.62)}}
+/* Visually hidden but still announced - the SVG is aria-hidden, so without this the button
+   would have no accessible name at all. */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+body.nav-open .theme-toggle{color:color-mix(in srgb,var(--fg) calc(62% * var(--dim)),transparent)}
+body.nav-open .theme-toggle:hover{color:var(--fg)}
+.nav-toggle{display:none;flex-direction:column;justify-content:center;gap:5px;width:28px;height:28px;background:none;border:0;cursor:pointer;padding:0;color:inherit}
 .nav-toggle span{display:block;width:100%;height:2px;background:currentColor;transition:transform .28s var(--out),opacity .2s}
 body.nav-open .nav-toggle span:nth-child(1){transform:translateY(7px) rotate(45deg)}
 body.nav-open .nav-toggle span:nth-child(2){opacity:0}
@@ -34,7 +54,7 @@ body.nav-open .nav-toggle span:nth-child(3){transform:translateY(-7px) rotate(-4
      theme: white text on the cream background is invisible. */
   body.nav-open .site-nav{color:var(--fg)}
   body.nav-open .nav-cv{border-color:color-mix(in srgb,var(--fg) 40%,transparent)}
-  body.nav-open .lang-switch button{color:color-mix(in srgb,var(--fg) 58%,transparent)}
+  body.nav-open .lang-switch button{color:color-mix(in srgb,var(--fg) calc(58% * var(--dim)),transparent)}
   body.nav-open .lang-switch button.active{color:var(--fg)}
   /* justify-self would otherwise shrink this to its content width once it's an
      absolutely-positioned grid item. */
@@ -47,9 +67,9 @@ body.nav-open .nav-toggle span:nth-child(3){transform:translateY(-7px) rotate(-4
   @keyframes nav-drop{from{opacity:0;transform:translateY(-8px)}}
 }
 
-.nav-gh{display:flex;color:inherit;opacity:.75;transition:opacity .2s;border-radius:5px}
+.nav-gh{display:flex;color:inherit;opacity:.75;transition:opacity .2s}
 .nav-gh svg{width:20px;height:20px;fill:currentColor}
-.nav-cv{font:700 .74rem/1 var(--sans);letter-spacing:.09em;text-decoration:none;color:inherit;border:1px solid rgba(255,255,255,.4);border-radius:999px;padding:.5rem .8rem;opacity:.8;transition:opacity .2s,background .2s,border-color .2s,transform var(--press) var(--out)}
+.nav-cv{font:700 .74rem/1 var(--sans);letter-spacing:.09em;text-decoration:none;color:inherit;border:1px solid rgba(255,255,255,.4);border-radius:0;padding:.5rem .8rem;opacity:.8;transition:opacity .2s,background .2s,border-color .2s,transform var(--press) var(--out)}
 .nav-cv:active{transform:scale(.96)}
 .nav-gh:hover,.nav-gh:focus-visible{opacity:1}
 .nav-cv:hover,.nav-cv:focus-visible{opacity:1;background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.75)}

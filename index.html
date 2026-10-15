@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="nl">
+<html lang="nl" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,10 +15,9 @@
 <meta property="og:description" content="Backend development met Laravel, Symfony en Go, UI/UX en automatie. Open voor stages en juniorfuncties.">
 <meta property="og:locale" content="nl_NL">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;800&family=Space+Grotesk:wght@500;700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Fraunces:ital,wght@1,500&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,600,700,800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/devicon/2.16.0/devicon.min.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/devicon/2.16.0/devicon.min.css"></noscript>
 <link rel="icon" type="image/png" sizes="32x32" href="media/favicon/fav-32.png">
@@ -39,6 +38,19 @@
 <link rel="stylesheet" href="css/reduced-motion.css">
 
 <script>document.documentElement.classList.add('js');setTimeout(function(){document.documentElement.classList.add('go')},2500)</script>
+<!-- Runs before first paint. Without it the page renders a frame in the wrong palette and
+     then snaps - the flash is far more noticeable on a dark theme than on a light one.
+     An explicit choice in localStorage wins; otherwise the OS decides. -->
+<script>
+(function(){
+  try{
+    var saved = localStorage.getItem('theme');
+    document.documentElement.dataset.theme =
+      (saved === 'light' || saved === 'dark') ? saved
+      : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  }catch(e){ document.documentElement.dataset.theme = 'light'; }
+})();
+</script>
 </head>
 <body>
 <a class="skip-link" href="#content">Skip to content</a>
@@ -62,29 +74,26 @@
       <button data-lang="pl" aria-pressed="false">PL</button>
       <button data-lang="nl" class="active" aria-pressed="true">NL</button>
     </div>
+    <!-- Both glyphs are in the DOM and CSS picks one, so the button never re-renders on a
+         theme change and the icon can't land out of step with the label. -->
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-live="polite">
+      <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0-13a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0V5a1 1 0 0 1 1-1zm0 15a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0v-1a1 1 0 0 1 1-1zM4 11h1a1 1 0 1 1 0 2H4a1 1 0 1 1 0-2zm15 0h1a1 1 0 1 1 0 2h-1a1 1 0 1 1 0-2zM5.6 6.6a1 1 0 0 1 1.4 0l.7.7a1 1 0 1 1-1.4 1.4l-.7-.7a1 1 0 0 1 0-1.4zm10.6 10.6a1 1 0 0 1 1.4 0l.7.7a1 1 0 1 1-1.4 1.4l-.7-.7a1 1 0 0 1 0-1.4zm1.4-10.6a1 1 0 0 1 0 1.4l-.7.7A1 1 0 0 1 15.5 8l.7-.7a1 1 0 0 1 1.4 0zM7.3 17.9a1 1 0 0 1 0 1.4l-.7.7a1 1 0 0 1-1.4-1.4l.7-.7a1 1 0 0 1 1.4 0z"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      <span class="sr-only">Dark mode</span>
+    </button>
     <button class="nav-toggle" aria-label="Menu" aria-expanded="false" aria-controls="nav-links-panel"><span></span><span></span><span></span></button>
   </div>
 </nav>
 
 <header class="hero" id="top">
-  <div class="hero-blob" aria-hidden="true">
-    <div class="blob-track">
-      <div class="blob-field" id="blobField">
-        <div class="blob blob-cool"></div>
-        <div class="blob blob-warm"></div>
-        <div class="blob blob-core"></div>
-        <div class="blob-grain"></div>
-      </div>
-    </div>
-  </div>
-  <canvas class="hero-gl" id="gl" aria-hidden="true"></canvas>
+  <canvas class="hero-wave" id="heroWave" aria-hidden="true"></canvas>
   <div class="hero-inner">
     <div class="hero-pfp"><img src="media/pfp.jpg" alt="Dominik Krakowski" width="460" height="460" fetchpriority="high" decoding="async"></div>
     <h1 class="hero-name">Dominik Krakowski</h1>
     <p class="hero-role" data-i18n="hero.tagline">Geïnteresseerd in backend development, UI/UX en automatie.</p>
     <p class="hero-greeting" id="greeting" aria-hidden="true">Hello</p>
     <div class="hero-actions">
-      <a class="btn-cv btn-cv-primary" href="media/Dominik_Krakowski_CV.pdf" download>
+      <a class="btn-cv" href="media/Dominik_Krakowski_CV.pdf" download>
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v10.2l3.6-3.6 1.4 1.4-6 6-6-6 1.4-1.4L10 13.2V3zM4 19h16v2H4z"/></svg>
         <span data-i18n="cv.download">Download CV</span>
       </a>
@@ -106,7 +115,7 @@
       <path pathLength="1" d="M -50 120 C 90 210, 210 30, 340 140 S 610 260, 700 90 S 950 40, 990 210"/>
       <path pathLength="1" d="M -50 720 C 60 640, 260 780, 380 690 S 560 560, 720 700 S 880 820, 970 730"/>
     </svg></div>
-    <h2 class="eyebrow-heading" data-i18n="about.heading">Over mij</h2>
+    <h2 class="eyebrow-heading" data-index="01" data-i18n="about.heading">Over mij</h2>
     <p class="lead" data-i18n="about.body">Ik ben Dominik, 19 jaar, en volg de opleiding Software Development (MBO-4) aan het Talland College in Alkmaar. Ik ben vooral geïnteresseerd in backend development, automatie en UI/UX.</p>
     <div class="lang-spoken">
       <span class="label" data-i18n="about.langLabel">Talen die ik spreek</span>
@@ -127,7 +136,7 @@
     <div class="section-lines" aria-hidden="true"><svg viewBox="0 0 800 700" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
       <path pathLength="1" d="M -50 480 C 120 400, 180 560, 340 500 S 540 380, 640 520 S 900 470, 950 560"/>
     </svg></div>
-    <h2 class="eyebrow-heading" data-i18n="skills.heading">Vaardigheden</h2>
+    <h2 class="eyebrow-heading" data-index="02" data-i18n="skills.heading">Vaardigheden</h2>
     <div class="skill-board">
       <div class="skill-panel skill-backend">
         <div class="label" data-i18n="skills.groupBackend">Backend</div>
@@ -178,33 +187,32 @@
   <div class="divider" data-hover-img="media/hovers/divider-6.webp" aria-hidden="true"></div>
 
   <section id="experience">
-    <h2 class="eyebrow-heading" data-i18n="experience.heading">Ervaring</h2>
-    <div class="timeline" id="timeline">
-      <div class="tl-line" aria-hidden="true"><div class="tl-fill"></div><div class="tl-head"></div></div>
-      <ol class="tl-list">
-        <li class="tl-item">
-          <span class="tl-dot" aria-hidden="true"></span>
-          <div class="tl-content">
-            <div class="tl-period" data-i18n="experience.meta">2026 · 640 uur · 6 maanden</div>
-            <h3>ICT Vanaf Morgen</h3>
-            <div class="tl-role" data-i18n="experience.role">Stage Software Developer · UI/UX Lead, Backend Developer</div>
-            <p data-i18n="experience.body">Tijdens mijn stage bij ICT Vanaf Morgen heb ik voornamelijk gewerkt aan interne projecten, zoals een eigen variant van SharePoint en een API Data Mapper. Daarnaast heb ik geholpen met tickets bij andere projecten.</p>
-            <p data-i18n="experience.body2">Binnen deze projecten heb ik voornamelijk gewerkt aan admin panels en de bijbehorende authenticatie, API verbindingen en het ophalen van data. Ook had ik regelmatig de rol van lead designer, waarbij ik verantwoordelijk was voor het UI/UX.</p>
-            <div class="tl-tags"><span class="tag tag-icon"><i class="devicon-laravel-plain colored"></i>Laravel</span><span class="tag tag-icon"><i class="devicon-symfony-original colored"></i>Symfony</span><span class="tag tag-icon"><i class="devicon-php-plain colored"></i>PHP</span><span class="tag tag-icon"><i class="devicon-typescript-plain colored"></i>TypeScript</span><span class="tag tag-icon"><i class="devicon-tailwindcss-original colored"></i>Tailwind</span></div>
-          </div>
-        </li>
-        <!-- To add another internship, copy a whole <li class="tl-item"> block
-             and place it above the "next" item. The line, dots and spacing adjust automatically. -->
-        <li class="tl-item tl-next">
-          <span class="tl-dot" aria-hidden="true"></span>
-          <div class="tl-content">
-            <div class="tl-period" data-i18n="experience.nextLabel">Wat volgt</div>
-            <h3 data-i18n="experience.nextTitle">Op zoek naar mijn volgende stage</h3>
-            <p data-i18n="experience.nextBody">Open voor stages.</p>
-          </div>
-        </li>
-      </ol>
-    </div>
+    <h2 class="eyebrow-heading" data-index="03" data-i18n="experience.heading">Ervaring</h2>
+  <div class="exp" id="exp">
+    <span class="exp-cursor" aria-hidden="true"></span>
+    <ol class="exp-list">
+      <li class="exp-entry">
+        <div class="exp-body">
+          <div class="exp-when" data-i18n="experience.meta">2026 · 640 uur · 6 maanden</div>
+          <h3>ICT Vanaf Morgen</h3>
+          <div class="exp-role" data-i18n="experience.role">Stage Software Developer · UI/UX Lead, Backend Developer</div>
+          <p data-i18n="experience.body">Tijdens mijn stage bij ICT Vanaf Morgen heb ik voornamelijk gewerkt aan interne projecten, zoals een eigen variant van SharePoint en een API Data Mapper. Daarnaast heb ik geholpen met tickets bij andere projecten.</p>
+          <p data-i18n="experience.body2">Binnen deze projecten heb ik voornamelijk gewerkt aan admin panels en de bijbehorende authenticatie, API verbindingen en het ophalen van data. Ook had ik regelmatig de rol van lead designer, waarbij ik verantwoordelijk was voor het UI/UX.</p>
+          <div class="exp-tags"><span class="tag tag-icon"><i class="devicon-laravel-plain colored"></i>Laravel</span><span class="tag tag-icon"><i class="devicon-symfony-original colored"></i>Symfony</span><span class="tag tag-icon"><i class="devicon-php-plain colored"></i>PHP</span><span class="tag tag-icon"><i class="devicon-typescript-plain colored"></i>TypeScript</span><span class="tag tag-icon"><i class="devicon-tailwindcss-original colored"></i>Tailwind</span></div>
+        </div>
+      </li>
+      <!-- To add another internship, copy a whole <li class="exp-entry"> block and place
+           it above the "open" entry. Each entry draws its own segment, so the track, the
+           handover between segments and the dot's travel all adjust on their own. -->
+      <li class="exp-entry exp-open">
+        <div class="exp-body">
+          <div class="exp-when" data-i18n="experience.nextLabel">Wat volgt</div>
+          <h3 data-i18n="experience.nextTitle">Op zoek naar mijn volgende stage</h3>
+          <p data-i18n="experience.nextBody">Open voor stages.</p>
+        </div>
+      </li>
+    </ol>
+  </div>
   </section>
 
   <div class="divider" data-hover-img="media/hovers/divider-3.png" aria-hidden="true"></div>
@@ -213,13 +221,13 @@
     <div class="section-lines" aria-hidden="true"><svg viewBox="0 0 800 700" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
       <path pathLength="1" d="M -50 250 C 140 190, 230 340, 400 260 S 660 150, 760 300 S 900 260, 970 340"/>
     </svg></div>
-    <h2 class="eyebrow-heading" data-i18n="projects.heading">Projecten</h2>
+    <h2 class="eyebrow-heading" data-index="04" data-i18n="projects.heading">Projecten</h2>
     <article class="project-card">
       <div class="project-card-glow" aria-hidden="true"></div>
       <div class="project-eyebrow" data-i18n="projects.featured">Laatste Project</div>
       <h3 class="project-title">NyaasiAuto</h3>
       <p data-i18n="projects.nyaasi">Scraped nyaa.si RSS feed voor torrents uit een json config file en stuurt automataisch nieuwe gevonden episodes naar qBittorrent web ui.</p>
-      <div class="project-tags"><span class="tag tag-icon"><i class="devicon-go-plain colored"></i>Go</span><span class="tag">Gin</span><span class="tag tag-icon"><i class="devicon-swagger-plain colored"></i>REST API</span></div>
+      <div class="project-tags"><span class="tag tag-icon"><i class="devicon-go-plain colored"></i>Go</span><span class="tag">Gin</span><span class="tag">REST API</span></div>
       <div class="project-actions">
         <a class="btn-primary" href="https://github.com/Git-Dominik/NyaasiAuto" target="_blank" rel="noopener" data-i18n="projects.view">Bekijk op GitHub</a>
         <a class="project-more-link" href="https://github.com/Git-Dominik" target="_blank" rel="noopener" data-i18n="projects.more">Meer projecten op GitHub</a>
@@ -230,8 +238,7 @@
       <ul class="proj-list">
         <li class="proj-row">
           <button class="proj-head" type="button" aria-expanded="false" aria-controls="proj-bakkerai">
-            <span class="proj-name">Bakkerai</span>
-            <span class="proj-sum" data-i18n="projects.bakkeraiSum">AI-chatbot voor bakkerijstudenten</span>
+            <span class="proj-labels"><span class="proj-name">Bakkerai</span><span class="proj-sum" data-i18n="projects.bakkeraiSum">AI-chatbot voor bakkerijstudenten</span></span>
             <span class="proj-plus" aria-hidden="true"></span>
           </button>
           <div class="proj-body" id="proj-bakkerai"><div class="proj-inner">
@@ -241,19 +248,17 @@
         </li>
         <li class="proj-row">
           <button class="proj-head" type="button" aria-expanded="false" aria-controls="proj-qbit">
-            <span class="proj-name">qbit-service</span>
-            <span class="proj-sum" data-i18n="projects.qbitSum">Kleine Go-dienst als brug naar qBittorrent</span>
+            <span class="proj-labels"><span class="proj-name">qbit-service</span><span class="proj-sum" data-i18n="projects.qbitSum">Kleine Go-dienst als brug naar qBittorrent</span></span>
             <span class="proj-plus" aria-hidden="true"></span>
           </button>
           <div class="proj-body" id="proj-qbit"><div class="proj-inner">
             <p data-i18n="projects.qbit">Logt in op mijn lokale qBittorrent en stelt twee endpoints beschik: een om een torrent toe te voegen via magnetlink en een die de torrentlijst teruggeeft.</p>
-            <div class="proj-foot"><span class="tag tag-icon"><i class="devicon-go-plain colored"></i>Go</span><span class="tag">Gin</span><span class="tag tag-icon"><i class="devicon-swagger-plain colored"></i>REST API</span><a class="project-more-link" href="https://github.com/Git-Dominik/qbit-service" target="_blank" rel="noopener" data-i18n="projects.view">Bekijk op GitHub</a></div>
+            <div class="proj-foot"><span class="tag tag-icon"><i class="devicon-go-plain colored"></i>Go</span><span class="tag">Gin</span><span class="tag">REST API</span><a class="project-more-link" href="https://github.com/Git-Dominik/qbit-service" target="_blank" rel="noopener" data-i18n="projects.view">Bekijk op GitHub</a></div>
           </div></div>
         </li>
         <li class="proj-row">
           <button class="proj-head" type="button" aria-expanded="false" aria-controls="proj-exhibition">
-            <span class="proj-name">exhibition-launcher</span>
-            <span class="proj-sum" data-i18n="projects.exhibitionSum">Gamelauncher met eigen BitTorrent-client</span>
+            <span class="proj-labels"><span class="proj-name">exhibition-launcher</span><span class="proj-sum" data-i18n="projects.exhibitionSum">Gamelauncher met eigen BitTorrent-client</span></span>
             <span class="proj-plus" aria-hidden="true"></span>
           </button>
           <div class="proj-body" id="proj-exhibition"><div class="proj-inner">
@@ -267,40 +272,49 @@
 
   <div class="divider" data-hover-img="media/hovers/divider-4.png" aria-hidden="true"></div>
 
-  <section id="contact">
-    <h2 class="eyebrow-heading" data-i18n="contact.heading">Laten we praten</h2>
-    <div class="contact-grid">
-      <div>
-        <p data-i18n="contact.body">Heb je een project in gedachten, of wil je gewoon even kennis maken? Ik hoor het graag!</p>
-        <div class="mail-row">
-          <!-- Replace with your real email address -->
-          <a class="mail" href="mailto:p.dominikkrakowski04@gmail.com">p.dominikkrakowski04@gmail.com</a>
-          <button class="copy" type="button" data-i18n="contact.copy">Kopieer e-mail</button>
-          <a class="btn-cv" href="media/Dominik_Krakowski_CV.pdf" download>
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v10.2l3.6-3.6 1.4 1.4-6 6-6-6 1.4-1.4L10 13.2V3zM4 19h16v2H4z"/></svg>
-            <span data-i18n="cv.download">Download CV</span>
-          </a>
-        </div>
-        <div class="contact-links">
-          <a href="tel:+31685406368">+31 685406368</a>
-          <a href="https://github.com/Git-Dominik" target="_blank" rel="noopener">github.com/Git-Dominik</a>
+  <!-- Contact + footer are one continuous closing block: they share a floor deeper than the
+       middle sections, and now one canvas spanning both. The wrapper is what carries that
+       floor and the wave, so the two elements themselves stay transparent. -->
+  <div class="closing">
+    <div class="closing-bloom" aria-hidden="true"></div>
+    <canvas class="closing-wave" aria-hidden="true"></canvas>
+    <section id="contact">
+      <h2 class="eyebrow-heading" data-index="05" data-i18n="contact.heading">Laten we praten</h2>
+      <div class="contact-grid">
+        <div>
+          <p data-i18n="contact.body">Heb je een project in gedachten, of wil je gewoon even kennis maken? Ik hoor het graag!</p>
+          <div class="mail-row">
+            <!-- Replace with your real email address -->
+            <a class="mail" href="mailto:p.dominikkrakowski04@gmail.com">p.dominikkrakowski04@gmail.com</a>
+            <button class="copy" type="button" data-i18n="contact.copy">Kopieer e-mail</button>
+            <a class="btn-cv" href="media/Dominik_Krakowski_CV.pdf" download>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v10.2l3.6-3.6 1.4 1.4-6 6-6-6 1.4-1.4L10 13.2V3zM4 19h16v2H4z"/></svg>
+              <span data-i18n="cv.download">Download CV</span>
+            </a>
+          </div>
+          <div class="contact-links">
+            <a href="tel:+31685406368">+31 685406368</a>
+            <a href="https://github.com/Git-Dominik" target="_blank" rel="noopener">github.com/Git-Dominik</a>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <footer class="foot">
-    <div class="wordmark" id="wordmark" aria-hidden="true"><span class="out">Dominik</span><span class="fill">Dominik</span></div>
-    <div class="foot-row">
-      <span data-i18n="footer.text">© 2026 Dominik</span>
-      <button class="top" id="toTop" type="button" data-i18n="footer.top">Naar boven</button>
-    </div>
-  </footer>
+    <footer class="foot">
+      <div class="wordmark" id="wordmark" aria-hidden="true"><span class="out">Dominik</span><span class="fill">Dominik</span></div>
+      <div class="foot-row">
+        <span data-i18n="footer.text">© 2026 Dominik</span>
+        <button class="top" id="toTop" type="button" data-i18n="footer.top">Naar boven</button>
+      </div>
+    </footer>
+  </div>
 </main>
 
 <script defer src="js/core.js"></script>
+<script defer src="js/theme.js"></script>
 <script defer src="js/i18n.js"></script>
 <script defer src="js/hero.js"></script>
+<script defer src="js/herowave.js"></script>
 <script defer src="js/nav.js"></script>
 <script defer src="js/reveal.js"></script>
 <script defer src="js/experience.js"></script>

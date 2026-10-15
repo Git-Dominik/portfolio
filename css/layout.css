@@ -1,15 +1,87 @@
 /* CONTENT: always visible, so scrolling never feels blocked */
 #content{overflow-x:clip}
 section{max-width:var(--max);margin:0 auto;padding:5.5rem var(--edge) 1rem;position:relative;scroll-margin-top:5rem}
-section:last-of-type{padding-bottom:6rem}
+/* #contact, not section:last-of-type. :last-of-type resolves against the PARENT, and contact
+   no longer shares a parent with the other sections now that contact + footer are wrapped in
+   .closing - which made projects the last section child of #content and handed it both this
+   padding and the opt-out from the dark floor below. Naming the section that opts out is
+   immune to that. The 1rem baseline is already on the section rule above. */
+#contact{padding-bottom:6rem}
+
+/* Dark mode only: the middle sections take a floor a shade darker than the page. Dark needs
+   it - the page ground (#1c1c23) already sits close to the panel fills, so without a step
+   they have no ground of their own. Light does not: the page is bright there and the panels
+   already do the separating. Darkened toward black rather than toward a second hue, so the
+   single accent still owns all the colour on the page.
+   :not(#contact) keeps the overlap that carries each floor down over the gap above the
+   next divider. That gap is .divider's 2.5rem top margin PLUS the 1px rule itself - and the
+   +1px is not optional. At +2.5rem alone the floor stopped exactly on the rule's top edge,
+   leaving that single row showing the page ground across the full viewport: a hairline of the
+   wrong colour stretching well past the 740px rule, which read as a stray line on the page.
+   The overlap hangs off the SECTION, not off .divider, and that is load-bearing: the divider
+   is a reveal target ([data-r=line] scales it in on X), and a transform on an element also
+   transforms its pseudo-elements - so a filler attached to .divider got squashed to zero
+   width whenever the divider was mid-reveal, which opened the gap back up for a second. */
+/* :not(#contact) rather than :not(:last-of-type), for the same reason as the padding above:
+   the floor belongs to every section except the one the .closing wrapper now owns. */
+[data-theme=dark] #content section:not(#contact)::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:100vw;height:calc(100% + 2.5rem + 1px);z-index:-1;background:color-mix(in srgb,var(--bg) 87%,#000)}
+/* The marquee band and the gap under it join the same run, otherwise its 0.5rem bottom
+   margin sits on the page ground and reads as a pale strip above the first section. This has
+   to be a box-shadow rather than a ::before filler: .band-wrap is overflow:hidden (the
+   marquee has to be clipped), and that clips a pseudo to the padding box - the 100vw would
+   come in at the wrapper's width and the .5rem extension would be trimmed off entirely. A
+   zero-blur shadow is not clipped by the element's own overflow, paints above the page
+   ground, and still sits behind the band's translucent frame so the frame keeps its tone.
+   The gap above is left alone on purpose: the hero is up there on that same page ground,
+   and matching it keeps the hero's own edge clean. */
+[data-theme=dark] .band-wrap{box-shadow:0 .5rem 0 color-mix(in srgb,var(--bg) 87%,#000)}
+/* Contact + footer are one continuous closing block, one step deeper than the middle
+   sections. The floor lives on the wrapper rather than on the two elements: they are
+   adjacent, and a floor each would put a seam between them. It also means no pseudo at
+   all - the wrapper is a real box, so its own background does the work.
+   The light ground moves toward --fg rather than toward black, because in light the panels
+   are already darker than the page (color-mix(fg 3%)) and darkening away from --fg would
+   read as dirty rather than as depth. 97% is barely a shade down - the bloom and the
+   ribbon are meant to be doing the work there, not the ground. */
+[data-theme=dark] .closing{background:color-mix(in srgb,var(--bg) 78%,#000)}
+[data-theme=light] body.transitioned .closing{background:color-mix(in srgb,var(--bg) 97%,var(--fg))}
+/* The background ribbon behind the block (js/herowave.js, the CLOSING instance) plus the
+   soft bloom it sits on. Light mode gets its own treatment rather than a dimmed copy of the
+   dark one: additive blending is a no-op on a near-white ground, so the shader switches to
+   source-over and a much higher alpha - see the CLOSING config. The bloom exists in the
+   markup rather than in the shader so it does not need a second drawing mode. */
+/* overflow:hidden is load-bearing, not tidiness. The bloom is deliberately hung below the
+   block (bottom:-18%) so its brightest point lands on the footer's baseline, and it is an
+   absolutely positioned box - so it contributes no height of its own but it DOES overflow.
+   Without a clip that overflow escapes upward through #content, which is overflow-x:clip
+   and therefore clips horizontal only, leaving ~18% of the block height as scrollable dead
+   space under the footer. The canvas is inset:0 so it is unaffected, and footer.foot already
+   had its own overflow:hidden for the nowrap wordmark. */
+.closing{position:relative;overflow:hidden}
+.closing-bloom{position:absolute;z-index:0;left:-10%;right:-10%;bottom:-18%;height:78%;pointer-events:none;opacity:0;filter:blur(64px);transition:opacity .6s var(--ease);background:radial-gradient(60% 70% at 28% 100%,rgba(124,137,255,.3) 0,transparent 68%),radial-gradient(52% 62% at 82% 92%,rgba(255,127,168,.22) 0,transparent 66%)}
+[data-theme=light] body.transitioned .closing-bloom{opacity:1}
+.closing-wave{position:absolute;inset:0;z-index:0;width:100%;height:100%;pointer-events:none;transition:opacity .6s var(--ease)}
+/* Named targets, not :not(canvas): the bloom is also a non-canvas child of .closing, and a
+   :not() exclusion would have handed it position:relative and z-index:1 over the top of
+   the ribbon it is supposed to sit behind. */
+.closing > section,.closing > footer{position:relative;z-index:1}
 /* The rule itself. This was an <hr> with a top border, which looks identical but whose
    pseudo-elements Chrome refuses to hit-test, so the hover art could only ever trigger on
    the single 1px line. A div with a background is the same box to the pixel.
    The hover hit area is not an overlay: it is tested in JS against this rect (see
    js/hoverart.js), which keeps it invisible AND keeps it from swallowing clicks. */
 .divider{position:relative;max-width:var(--max);height:1px;margin:2.5rem auto 0;background:color-mix(in srgb,var(--fg) 14%,transparent)}
-.eyebrow-heading{font-size:clamp(1.9rem,3.6vw,2.5rem);font-weight:700;letter-spacing:-.02em;line-height:1.1;margin:0 0 2.2rem;display:flex;align-items:center;gap:1.2rem}
-.eyebrow-heading::after{content:"";flex:1;min-width:2rem;height:1px;background:linear-gradient(90deg,var(--accent-solid),color-mix(in srgb,var(--fg) 12%,transparent) 55%,transparent)}
+/* Section heading. Carries an accent index above the word, so each section is identified
+   rather than repeating the same heading-and-rule five times, and the type scale is closer
+   to the hero's - the sections were reading far quieter than the name above them. */
+/* Weight 300, and the tracking relaxed from -.03em to -.01em to go with it. Negative
+   tracking is a device for tightening heavy faces; at 300 the strokes are thin enough that
+   -.03em starts colliding in the tighter pairs (the "rg" in "Ervaring" and "Projecten").
+   The section headings are the page's main display type once the hero is set aside, so they
+   are where this change does its work. */
+.eyebrow-heading{font-size:clamp(2.1rem,4.4vw,3.1rem);font-weight:300;letter-spacing:-.01em;line-height:1.05;margin:0 0 2.2rem;display:flex;flex-wrap:wrap;align-items:center;gap:.55rem 1.2rem}
+.eyebrow-heading::before{content:attr(data-index);flex:0 0 100%;font:700 .74rem var(--sans);letter-spacing:.16em;color:var(--accent-ink)}
+.eyebrow-heading::after{content:"";flex:1;min-width:2rem;height:1px;background:var(--accent-solid)}
 
 /* Background curves draw themselves in as each section arrives */
 .section-lines{position:absolute;top:0;left:50%;transform:translateX(-50%);width:100vw;height:100%;z-index:-1;pointer-events:none;overflow:hidden}
@@ -18,15 +90,27 @@ section:last-of-type{padding-bottom:6rem}
 section.in-view .section-lines path{stroke-dashoffset:0;transition:stroke-dashoffset 2.6s cubic-bezier(.4,0,.2,1)}
 
 /* Marquee band between hero and content. position:relative + z-index gives it its own
-   stacking context, so nothing from the hero's decorative layers (blob, WebGL canvas) can
-   paint over the strip on browsers that composite those differently. */
-.band-wrap{position:relative;z-index:0;overflow:hidden;padding:2.5rem 0 .5rem}
-.band{width:108%;margin-left:-4%;transform:rotate(-2deg);border-block:1px solid color-mix(in srgb,var(--fg) 18%,transparent);padding:1.1rem 0;background:color-mix(in srgb,var(--fg) 3%,transparent)}
-.band-track{display:flex;width:max-content;animation:marq 40s linear infinite}
+   stacking context, so nothing from the hero's decorative layers (the WebGL canvas) can
+   paint over the strip on browsers that composite those differently.
+   The frame lives on the wrapper so its rules run crisp and full-bleed, while .band fades
+   only the words: words used to arrive sliced flat against both edges, which read as
+   clipping rather than as a marquee. The fade cannot go on .band-wrap - reveal.js tags that
+   element with its own sweep mask (css/animations.css), and the two would fight - and it
+   cannot go on .band-track either, because that is the element that moves.
+   The gap to the hero and the gap to the content are margins, not padding: padding on
+   .band-wrap lands INSIDE its own border-block, which pushed the words down inside the
+   strip - 2.5rem of empty space above them and 0.5rem below. */
+.band-wrap{position:relative;z-index:0;overflow:hidden;margin:2.5rem 0 .5rem;padding:1.6rem 0;border-block:1px solid color-mix(in srgb,var(--fg) 18%,transparent);background:color-mix(in srgb,var(--fg) 3%,transparent)}
+.band{
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)}
+.band-track{display:flex;width:max-content;will-change:transform;animation:marq 40s linear infinite}
 .band:hover .band-track{animation-play-state:paused}
 /* Every span uses --display, stroked or not: if the outlined words were set in a different
    face from the solid ones the line would read as two typefaces. */
-.band span{display:flex;align-items:center;font:700 clamp(2rem,5.2vw,3.8rem)/1 var(--display);letter-spacing:-.02em;white-space:nowrap;color:transparent;-webkit-text-stroke:1.5px color-mix(in srgb,var(--fg) 60%,transparent)}
+.band span{display:flex;align-items:center;font:300 clamp(2rem,5.2vw,3.8rem)/1 var(--display);letter-spacing:0;white-space:nowrap;color:transparent;-webkit-text-stroke:1.5px color-mix(in srgb,var(--fg) 60%,transparent)}
 .band span:nth-child(even){color:var(--fg);-webkit-text-stroke:0}
-.band span::after{content:"";width:.32em;height:.32em;margin:0 1.6rem;border-radius:50%;background:var(--accent-solid);flex:none}
-@keyframes marq{to{transform:translateX(-50%)}}
+.band span::after{content:"";width:.26em;height:.26em;margin:0 1.7rem;background:var(--accent-solid);flex:none}
+/* -2px on the Y is not a nudge: at line-height:1 the cap height sits just below the
+   em-box centre, which left the row measuring 3.5px low inside the strip. */
+@keyframes marq{from{transform:translateY(-2px)}to{transform:translate(-50%,-2px)}}

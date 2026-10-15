@@ -1,6 +1,19 @@
 @property --bg{syntax:'<color>';inherits:true;initial-value:#0a0a0a}
 @property --fg{syntax:'<color>';inherits:true;initial-value:#f2f0ea}
 @property --rp{syntax:'<percentage>';inherits:false;initial-value:0%}
+/* How far the greeting palette is pulled toward --fg. Registered so it can animate: the
+   hero name is painted in --greet-* directly, which is legible on the dark hero but only
+   about 2:1 once the page flips to the light palette. Mixing toward --fg restores it, and
+   doing it through a transitionable percentage avoids a hard colour swap mid-scroll. */
+@property --greet-mix{syntax:'<percentage>';inherits:true;initial-value:0%}
+/* How far the grey text levels are dimmed, as a multiplier on their color-mix percentage.
+   Registered as a number so it can drive calc() inside color-mix. Dark needs it: the dark
+   ground sits close to the panels, so a grey tuned against #faf9f6 reads as too bright
+   here, but the SAME percentage in light mode is already near the 4.5:1 floor - dropping
+   64% to 56% for both themes would take light from 5.42:1 to 4.1:1. One multiplier, set
+   per theme, is what keeps the greys adjustable in dark without regressing light.
+   At .90 the dimmest live level lands at 4.64:1. */
+@property --dim{syntax:'<number>';inherits:true;initial-value:1}
 
 :root{
   --accent:124,137,255;
@@ -15,24 +28,35 @@
   --out:cubic-bezier(.16,1,.3,1);
   --sweep:cubic-bezier(.5,.1,.2,1);
   --spring:cubic-bezier(.22,1,.36,1);
-  /* Bricolage Grotesque for UI text. 400 and 600 matter: nav links, labels and .copy ask
-     for them, and without them those silently rendered in Arial. */
-  --sans:'Bricolage Grotesque','Helvetica Neue',Arial,sans-serif;
-  /* Separate face for -webkit-text-stroke text only. Chrome cannot stroke Bricolage's
-     multi-axis variable font and silently substitutes a serif, so its rectangular serifs
-     were being drawn over the real letterforms. Space Grotesk strokes correctly. */
-  --display:'Space Grotesk','Helvetica Neue',Arial,sans-serif;
+  /* Satoshi for all UI and display text. 400 and 600 matter: nav links, labels and .copy ask
+     for them, and without them those silently rendered in the system face. */
+  --sans:'Satoshi',ui-sans-serif,system-ui,sans-serif;
+  /* -webkit-text-stroke text only. Kept on the same face as --sans so the outlined wordmark
+     and marquee don't read as a different typeface from the rest of the page. */
+  --display:'Satoshi',ui-sans-serif,system-ui,sans-serif;
   --press:140ms;
+  /* The three greeting colours, in loop order: indigo, pink, teal. One definition, two
+     consumers - the rotating greeting in js/hero.js and the gradient on the hero wave in
+     js/herowave.js. Change them here and both follow. */
+  --greet-1:#8E99FF;
+  --greet-2:#FF7FA8;
+  --greet-3:#3FDDD1;
+  /* Hero wave (js/herowave.js): a global alpha dial so the whole ribbon can be turned up or
+     down in one place. Its three colour stops are the --greet-* values above, not a copy. */
+  --wave-alpha:1;
 }
 
 *{box-sizing:border-box}
 /* No scroll-snap: free, native scrolling. Anchor jumps stay smooth. */
 html{scroll-behavior:smooth;scroll-padding-top:5rem;color-scheme:dark}
-body{--bg:#0a0a0a;--fg:#f2f0ea;margin:0;background:var(--bg);color:var(--fg);font:400 18px/1.75 'Source Serif 4',Georgia,serif;-webkit-font-smoothing:antialiased;transition:--bg .6s var(--ease),--fg .6s var(--ease)}
-body.transitioned{--bg:#faf9f6;--fg:#141414;color-scheme:light;--accent-ink:#5563E9}
+/* body carries the hero's dark ground, which is also the whole dark theme. The scroll flip
+   to the light palette is scoped to [data-theme=light], so dark mode stays dark from the
+   first pixel to the last - there is no halfway state to be caught in. */
+body{--bg:#1c1c23;--fg:#e9e6df;--dim:.9;margin:0;background:var(--bg);color:var(--fg);font:400 18px/1.75 var(--sans);-webkit-font-smoothing:antialiased;transition:--bg .6s var(--ease),--fg .6s var(--ease),--greet-mix .6s var(--ease)}
+[data-theme=light] body.transitioned{--bg:#faf9f6;--fg:#141414;--dim:1;color-scheme:light;--accent-ink:#5563E9;--greet-mix:55%}
 h1,h2,h3{font-family:var(--sans);text-wrap:balance}
 a{color:inherit}
-:focus-visible{outline:2px solid var(--accent-solid);outline-offset:4px;border-radius:3px}
+:focus-visible{outline:2px solid var(--accent-solid);outline-offset:4px}
 ::selection{background:var(--accent-solid);color:#fff}
 
 /* Text wrap: balance headings (already), keep ragged prose from ending on a single word. */
@@ -44,10 +68,10 @@ p{text-wrap:pretty}
 p{margin:0 0 1.15rem;max-width:62ch}
 p:last-child{margin-bottom:0}
 
-.label{font:.85rem var(--sans);letter-spacing:.02em;color:color-mix(in srgb,var(--fg) 64%,transparent)}
+.label{font:.85rem var(--sans);letter-spacing:.02em;color:color-mix(in srgb,var(--fg) calc(64% * var(--dim)),transparent)}
 
 /* Download-CV button. Ghost by default, filled when it carries .btn-cv-primary */
-.btn-cv{display:inline-flex;align-items:center;gap:.55rem;font:700 .88rem var(--sans);letter-spacing:.01em;text-decoration:none;color:var(--fg);background:transparent;border:1px solid color-mix(in srgb,var(--fg) 28%,transparent);border-radius:999px;padding:.7rem 1.3rem;transition:transform var(--press) var(--out),box-shadow .2s,background .2s,color .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
+.btn-cv{display:inline-flex;align-items:center;gap:.55rem;font:700 .88rem var(--sans);letter-spacing:.01em;text-decoration:none;color:var(--fg);background:transparent;border:1px solid color-mix(in srgb,var(--fg) 28%,transparent);border-radius:0;padding:.7rem 1.3rem;transition:transform var(--press) var(--out),box-shadow .2s,background .2s,color .2s,border-color .2s;-webkit-tap-highlight-color:transparent}
 .btn-cv svg{width:16px;height:16px;fill:currentColor;flex:none}
 .btn-cv:active{transform:translateY(0) scale(.97)}
 .btn-cv:hover,.btn-cv:focus-visible{border-color:var(--accent-ink);color:var(--accent-ink);transform:translateY(-2px)}
@@ -66,4 +90,4 @@ p:last-child{margin-bottom:0}
 }
 
 /* Scroll progress */
-.progress{position:fixed;top:0;left:0;width:100%;height:3px;transform-origin:0 50%;transform:scaleX(var(--sp,0));background:linear-gradient(90deg,#7C89FF,#A56BFF,#FF7FA8);z-index:101;pointer-events:none;will-change:transform}
+.progress{position:fixed;top:0;left:0;width:100%;height:3px;transform-origin:0 50%;transform:scaleX(var(--sp,0));background:var(--accent-solid);z-index:101;pointer-events:none;will-change:transform}

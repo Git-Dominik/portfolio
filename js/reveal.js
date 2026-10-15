@@ -37,15 +37,19 @@
     // restore. Kept beside the element rather than on it.
     var modes = new WeakMap();
 
+    /* The marquee band is deliberately NOT in this list. It sits directly under a
+       full-viewport hero, so it starts life below the fold with the sweep mask at 0% -
+       which paints the whole strip as nothing. On a tall hero that reads as a blank band
+       rather than as content that has not arrived yet. It is decoration, not content, and
+       a missing strip is worse than an un-revealed one. */
     // [selector, mode, stagger between siblings (s), start delay (s)]
     [
       ['.eyebrow-heading', 'sweep'],
-      ['.band-wrap', 'sweep'],
       ['.divider', 'line'],
       ['.lead,.lang-spoken,.quick-facts', 'sweep', .12, .1],
       ['.skill-panel', 'sweep', .1],
       ['.skill-tile', 'pop', .05, .25],
-      ['.tl-content', 'sweep'],
+      ['.exp-body', 'sweep'],
       ['.project-card', 'sweep', 0, .1],
       ['.proj-more>.label', 'sweep'],
       ['.proj-row', 'sweep', .1, .05],
@@ -89,9 +93,15 @@
       el.classList.remove('is-in');
     }
 
+    /* Trigger early: the bottom margin is positive, which expands the observer's root box
+       downward, so an element starts revealing while it is still below the fold instead of
+       after its top edge has crossed it. A negative margin did the opposite and held the
+       reveal back by 6% of the viewport height. Doubled from the first pass: 16% of the
+       viewport as lead time, and a threshold low enough that a tall panel no longer has to
+       be a sixth of the way on screen before anything happens. */
     var onEnter = new IntersectionObserver(function(es){
       es.forEach(function(e){ if(e.isIntersecting) play(e.target); });
-    }, { threshold: .12, rootMargin: '0px 0px -6% 0px' });
+    }, { threshold: .03, rootMargin: '0px 0px 16% 0px' });
 
     // No margin and no threshold: re-arm only on a full exit, never while the element
     // is still partly on screen and would visibly snap to invisible.

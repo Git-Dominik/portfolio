@@ -4,7 +4,7 @@
 .lang-spoken .label{width:100%}
 /* Two up, with the education fact spanning the full row underneath; a third half-width
    cell on its own reads as a mistake, and three narrow columns cramp the course name. */
-.quick-facts{margin-top:2.4rem;display:grid;grid-template-columns:repeat(2,1fr);border:1px solid color-mix(in srgb,var(--fg) 16%,transparent);border-radius:14px;overflow:hidden}
+.quick-facts{margin-top:2.4rem;display:grid;grid-template-columns:repeat(2,1fr);border:1px solid color-mix(in srgb,var(--fg) 16%,transparent);overflow:hidden}
 .fact{padding:1.2rem 1.4rem}
 .fact+.fact{border-left:1px solid color-mix(in srgb,var(--fg) 16%,transparent)}
 .fact:nth-child(3){grid-column:1/-1;border-left:0;border-top:1px solid color-mix(in srgb,var(--fg) 16%,transparent)}
