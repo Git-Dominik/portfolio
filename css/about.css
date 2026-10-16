@@ -2,12 +2,20 @@
 .lead{font-size:clamp(1.25rem,2.5vw,1.5rem);line-height:1.55;max-width:34ch}
 .lang-spoken{margin-top:2rem;display:flex;flex-wrap:wrap;gap:.6rem 1.4rem;font:.95rem var(--sans)}
 .lang-spoken .label{width:100%}
-/* Two up, with the education fact spanning the full row underneath; a third half-width
-   cell on its own reads as a mistake, and three narrow columns cramp the course name. */
-.quick-facts{margin-top:2.4rem;display:grid;grid-template-columns:repeat(2,1fr);border:1px solid color-mix(in srgb,var(--fg) 16%,transparent);overflow:hidden}
-.fact{padding:1.2rem 1.4rem}
-.fact+.fact{border-left:1px solid color-mix(in srgb,var(--fg) 16%,transparent)}
-.fact:nth-child(3){grid-column:1/-1;border-left:0;border-top:1px solid color-mix(in srgb,var(--fg) 16%,transparent)}
-.fact .label{margin-bottom:.3rem;font-size:.8rem}
-.fact .value{font:1.05rem/1.4 var(--sans)}
-@media(max-width:560px){.quick-facts{grid-template-columns:1fr}.fact+.fact{border-left:0;border-top:1px solid color-mix(in srgb,var(--fg) 16%,transparent)}}
+/* The fact grid is the skills board, copied: .fact is .skill-panel and the one lit fact
+   carries .skill-backend::before. Same declarations, same values, same reveal entry
+   (js/reveal.js). Nothing here is bespoke, which is the point - the previous version of
+   these rules grew a container outline, per-panel border edges, min-heights and a pushed-to-
+   the-bottom value, and the block ended up looking like nothing else on the page. */
+.quick-facts{margin-top:2.4rem;display:grid;grid-template-columns:repeat(2,1fr);gap:.9rem}
+.fact{position:relative;padding:1.15rem 1.2rem 1.3rem;border:1px solid color-mix(in srgb,var(--fg) 14%,transparent);border-radius:0;background:color-mix(in srgb,var(--fg) 3%,transparent);-webkit-backdrop-filter:blur(10px) saturate(1.6);backdrop-filter:blur(10px) saturate(1.6);overflow:hidden;isolation:isolate}
+/* .skill-backend is grid-column:1/-1; here that is the education fact, the only one wide
+   enough to need the room. */
+.fact:nth-child(3){grid-column:1/-1}
+.fact .label{margin-bottom:.9rem;font:700 .74rem var(--sans);letter-spacing:.14em;text-transform:uppercase;color:color-mix(in srgb,var(--fg) calc(66% * var(--dim)),transparent)}
+.fact .value{font:1.05rem/1.4 var(--sans);max-width:44ch}
+/* .skill-backend::before, verbatim, on the one fact worth lighting - the one a visitor can
+   act on. It is a pseudo-element of the panel exactly as it is there, so the reveal sweeps
+   it along with the glass rather than treating it as separate scenery. */
+.fact:nth-child(2)::before{content:"";position:absolute;top:-110px;right:-80px;width:300px;height:300px;background:radial-gradient(circle,rgba(124,137,255,.34) 0,rgba(255,120,150,.18) 45%,transparent 72%);filter:blur(50px);z-index:-1;pointer-events:none}
+@media(max-width:560px){.quick-facts{grid-template-columns:1fr}.fact:nth-child(3){grid-column:auto}}

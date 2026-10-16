@@ -66,7 +66,11 @@
     [
       ['.eyebrow-heading', 'sweep'],
       ['.divider', 'line'],
-      ['.lead,.lang-spoken,.quick-facts', 'sweep', .12, .1],
+      ['.lead,.lang-spoken', 'sweep', .12, .1],
+      /* The About facts, configured exactly like .skill-panel above - same mode, same .1
+         stagger, no delay. The panels carry their own frost and their own sweep, which is
+         the arrangement that already works on the skills board. */
+      ['.fact', 'sweep', .1],
       ['.skill-panel', 'sweep', .1],
       ['.exp-body', 'sweep'],
       ['.proj-more>.label', 'sweep'],
