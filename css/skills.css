@@ -1,6 +1,20 @@
 /* Skills: a small board. Backend leads (it's the focus); icons stay mono until you point at them. */
 .skill-board{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:.9rem}
-.skill-panel{position:relative;padding:1.2rem 1.2rem 1.3rem;border:1px solid color-mix(in srgb,var(--fg) 14%,transparent);border-radius:0;background:color-mix(in srgb,var(--fg) 3%,transparent);overflow:hidden;isolation:isolate}
+/* FROSTED, following the nav bar's glass - blur(10px) saturate(1.6), -webkit- included
+   because Safari needs both and without the prefix the panels would be a flat translucent
+   fill there instead of glass. The radius is 10px rather than the nav's 14px because the
+   panels sit on a flat section floor: the nav has the hero and the whole page scrolling
+   behind it to blur, while here there is only a section curve or two, and at the nav's
+   radius those smear into nothing instead of reading as lines passing behind glass.
+
+   The fill stays on --fg 3% rather than being swapped for the nav's --bg 52% tint: --bg is
+   DARKER than the section floor in dark mode
+   (the floor is --bg mixed toward black, see layout.css), so the nav's tint would land
+   these panels a shade below the ground instead of lifting them off it. The 3% --fg fill
+   already lifts them in both themes, and the blur is what softens what passes behind:
+   the .section-lines curves and the dividers, which the panels now frost the way the nav
+   frosts the hero. */
+.skill-panel{position:relative;padding:1.2rem 1.2rem 1.3rem;border:1px solid color-mix(in srgb,var(--fg) 14%,transparent);border-radius:0;background:color-mix(in srgb,var(--fg) 3%,transparent);-webkit-backdrop-filter:blur(10px) saturate(1.6);backdrop-filter:blur(10px) saturate(1.6);overflow:hidden;isolation:isolate}
 /* Panel labels, uppercase and tracked, matching .project-eyebrow in colour and level too -
    both sit at a dimmed 66% --fg. They used to wear the accent; as accent they were the same
    visual weight as the panel borders and the whole board read as one loud block.
@@ -12,8 +26,49 @@
 .skill-backend{grid-column:1/-1}
 .skill-backend::before{content:"";position:absolute;top:-110px;right:-80px;width:300px;height:300px;background:radial-gradient(circle,rgba(124,137,255,.34) 0,rgba(255,120,150,.18) 45%,transparent 72%);filter:blur(50px);z-index:-1;pointer-events:none}
 .skill-tiles{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:.6rem}
-.skill-tile{position:relative;display:inline-flex;align-items:center;gap:.65rem;padding:.6rem 1rem .6rem .8rem;border:1px solid color-mix(in srgb,var(--fg) 12%,transparent);border-radius:0;background:color-mix(in srgb,var(--bg) 60%,transparent);font:600 .95rem var(--sans);overflow:hidden;transition:border-color .25s,transform .35s var(--out)}
-.skill-tile::before{content:"";position:absolute;inset:0;background:radial-gradient(160px circle at var(--mx,50%) var(--my,0%),rgba(var(--accent),.28),transparent 70%);opacity:0;transition:opacity .3s;pointer-events:none}
+/* Hover tint = the icon's own colour, so a tile's spotlight says which skill it is rather
+   than every tile flashing the same indigo.
+
+   The hexes are transcribed from the devicon stylesheet the page actually loads
+   (2.16.0 on cdnjs) rather than from each project's marketing page, because those are the
+   values the glyphs are painted with: devicon is an icon FONT, so a glyph's colour is the
+   `color` its `.colored` rule sets. Keyed on the icon class with :has() instead of a class
+   per tile, so adding a skill is one line here and no markup. Tiles with no devicon glyph -
+   Gin, Elysia, Wails, AI - match nothing and fall back to --accent.
+
+   Mixed 60/40 with --fg rather than used raw, and that is what makes one rule work for
+   every brand in both themes: --fg is near-white in dark and near-black in light, so the
+   mix lifts the brands that would vanish on the dark card (GitHub #181616, Symfony #1a171b,
+   Prisma #2d3748, Linux #000) and deepens the ones that would vanish on cream (JavaScript,
+   Python, Bun). Used raw, four tiles would have had no visible hover in dark and three none
+   in light. The hue survives the mix - it is a lighter or darker tint of the same colour,
+   not a different one. */
+.skill-tile:has(.devicon-blazor-original){--skill:92,45,145}
+.skill-tile:has(.devicon-bootstrap-plain){--skill:113,44,249}
+.skill-tile:has(.devicon-bun-plain){--skill:251,240,223}
+.skill-tile:has(.devicon-csharp-plain){--skill:104,33,122}
+.skill-tile:has(.devicon-css3-plain){--skill:61,143,198}
+.skill-tile:has(.devicon-github-original){--skill:24,22,22}
+.skill-tile:has(.devicon-git-plain){--skill:243,79,41}
+.skill-tile:has(.devicon-go-original-wordmark){--skill:0,172,215}
+.skill-tile:has(.devicon-html5-plain){--skill:229,77,38}
+.skill-tile:has(.devicon-javascript-plain){--skill:240,219,79}
+.skill-tile:has(.devicon-laravel-plain){--skill:240,81,63}
+.skill-tile:has(.devicon-linux-plain){--skill:0,0,0}
+.skill-tile:has(.devicon-php-plain){--skill:119,123,179}
+.skill-tile:has(.devicon-prisma-plain){--skill:45,55,72}
+.skill-tile:has(.devicon-python-plain){--skill:255,216,69}
+.skill-tile:has(.devicon-react-original){--skill:97,218,251}
+.skill-tile:has(.devicon-sqlite-plain){--skill:15,128,204}
+.skill-tile:has(.devicon-symfony-original){--skill:26,23,27}
+.skill-tile:has(.devicon-tailwindcss-original){--skill:56,189,248}
+.skill-tile:has(.devicon-typescript-plain){--skill:0,122,204}
+.skill-tile:has(.devicon-vuejs-plain){--skill:65,184,131}
+.skill-tile{position:relative;display:inline-flex;align-items:center;gap:.65rem;padding:.6rem 1rem .6rem .8rem;border:1px solid color-mix(in srgb,var(--fg) 12%,transparent);border-radius:0;background:color-mix(in srgb,var(--bg) 60%,transparent);font:600 .95rem var(--sans);overflow:hidden;transition:border-color .25s,transform .35s var(--out);--skill-glow:color-mix(in srgb,rgb(var(--skill,var(--accent))) 60%,var(--fg))}
+/* The alpha is applied by mixing with transparent rather than with an rgba() wrapper: the
+   colour has to go through color-mix first to reach the tint, and a color-mix() result cannot
+   be handed to rgb() as a channel list. */
+.skill-tile::before{content:"";position:absolute;inset:0;background:radial-gradient(160px circle at var(--mx,50%) var(--my,0%),color-mix(in srgb,var(--skill-glow) 28%,transparent),transparent 70%);opacity:0;transition:opacity .3s;pointer-events:none}
 .skill-tile i{position:relative;font-size:1.4rem;line-height:1;filter:grayscale(1);opacity:.7;transition:filter .3s,opacity .3s,transform .4s var(--spring)}
 .skill-tile span{position:relative}
 .skill-tile:hover{border-color:var(--accent-solid);transform:translateY(-3px)}

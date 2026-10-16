@@ -1,6 +1,6 @@
 /* CONTENT: always visible, so scrolling never feels blocked */
 #content{overflow-x:clip}
-section{max-width:var(--max);margin:0 auto;padding:5.5rem var(--edge) 1rem;position:relative;scroll-margin-top:5rem}
+section{max-width:var(--max);margin:0 auto;padding:5.5rem var(--edge) 1rem;position:relative;scroll-margin-top:calc(5rem + env(safe-area-inset-top,0px))}
 /* #contact, not section:last-of-type. :last-of-type resolves against the PARENT, and contact
    no longer shares a parent with the other sections now that contact + footer are wrapped in
    .closing - which made projects the last section child of #content and handed it both this

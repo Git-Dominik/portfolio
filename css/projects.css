@@ -1,6 +1,18 @@
 /* Projects. The tilt is interpolated in JS, so no CSS transition on transform here;
-   two easings stacked would trail the pointer. */
-.project-card{position:relative;padding:clamp(2.2rem,5.5vw,3.6rem);border:1px solid color-mix(in srgb,var(--fg) 14%,transparent);border-radius:0;background:color-mix(in srgb,var(--fg) 3%,transparent);overflow:hidden;isolation:isolate;will-change:transform}
+   two easings stacked would trail the pointer.
+
+   FROSTED, matching the skill panels exactly - blur(10px) saturate(1.6), -webkit- included
+   because Safari needs both and without the prefix the card would be a flat translucent fill
+   there instead of glass. Same 10px rather than the nav's 14px: like the panels, this sits on
+   a flat section floor with only a section curve or two behind it, and a wider radius smears
+   those into nothing instead of reading as lines passing behind glass.
+
+   The fill stays on --fg 3% for the reason the panels keep theirs: --bg is DARKER than the
+   section floor in dark mode (the floor is --bg mixed toward black, see layout.css), so the
+   nav's --bg tint would sink the card below the ground rather than lift it off it. What the
+   blur does here is soften the divider and the section curves as they pass behind the card,
+   which is what ties it to the skills board instead of leaving it a flat slab. */
+.project-card{position:relative;padding:clamp(2.2rem,5.5vw,3.6rem);border:1px solid color-mix(in srgb,var(--fg) 14%,transparent);border-radius:0;background:color-mix(in srgb,var(--fg) 3%,transparent);-webkit-backdrop-filter:blur(10px) saturate(1.6);backdrop-filter:blur(10px) saturate(1.6);overflow:hidden;isolation:isolate;will-change:transform}
 .project-card-glow{position:absolute;top:-140px;right:-120px;width:340px;height:340px;background:radial-gradient(circle,rgba(124,137,255,.38) 0,rgba(255,120,150,.2) 45%,transparent 72%);filter:blur(60px);pointer-events:none;z-index:-1;animation:glow 20s ease-in-out infinite}
 @keyframes glow{0%,100%{transform:none}50%{transform:translate(-18px,20px) scale(1.1)}}
 /* Dimmed white like the .skill-panel .label group names, and at the same 66% so the two

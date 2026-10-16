@@ -18,8 +18,20 @@
    has to carry the nav text over surfaces this page can actually put behind a fixed bar -
    its own floors, the ground, and the brightest panel fill - and over that set the worst
    case is still above 12:1 in both themes. It only drops under 4.5:1 against something
-   near-white in dark mode, which this page never renders behind the nav. */
-.site-nav{position:fixed;inset:0 0 auto 0;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;padding:1rem var(--edge);z-index:100;color:var(--fg);-webkit-tap-highlight-color:transparent;
+   near-white in dark mode, which this page never renders behind the nav.
+
+   Three columns and no column-gap, both deliberate. The equal minmax(0,1fr) side columns are
+   what centres the links (see the note at the top of this file), and that only works while
+   the right-hand column is the LAST one: any further column after it is unmatched slack, and
+   it drags the links left by half its width. An earlier attempt moved the theme toggle out
+   of .nav-right to give it its own column and shifted the links ~33px off centre. So the
+   trailing controls stay inside .nav-right, and the mobile breakpoint unboxes that container
+   instead of reshuffling the DOM.
+
+   The top padding carries the notch. viewport-fit=cover in index.html is what makes env()
+   report anything at all; without the inset here the bar sits under the status bar on a
+   notched phone and its own controls become untappable. */
+.site-nav{position:fixed;inset:0 0 auto 0;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;padding:calc(1rem + env(safe-area-inset-top,0px)) var(--edge) 1rem;z-index:100;color:var(--fg);-webkit-tap-highlight-color:transparent;
   background:color-mix(in srgb,var(--bg) 52%,transparent);
   -webkit-backdrop-filter:blur(14px) saturate(1.6);
   backdrop-filter:blur(14px) saturate(1.6)}
@@ -32,6 +44,20 @@
 .nav-links a{font:.92rem var(--sans);text-decoration:none;letter-spacing:.01em;padding-bottom:2px;border-bottom:1px solid transparent;transition:border-color .25s,color .25s;white-space:nowrap}
 .nav-links a.active{color:var(--fg)}
 .nav-links a:focus-visible{outline:2px solid currentColor;outline-offset:5px}
+/* Touch affordances for every control in the bar. The theme toggle, the CV button and the
+   hamburger already killed the tap highlight; the links and the language buttons had not, so
+   a tap on either flashed the platform's grey rectangle over the menu - the loudest "this is
+   a website" tell there is, and on the sheet it lands on top of a solid panel where it is
+   most visible. touch-action:manipulation tells the browser these never double-tap-zoom, so
+   the click fires on the first tap rather than after the zoom check. user-select:none is
+   right for all of these and wrong for the page: they are controls, not content, and a long
+   press should not select a nav label or pop the copy callout over the menu. */
+.nav-links a,.lang-switch button,.nav-gh{-webkit-tap-highlight-color:transparent}
+.nav-links a,.lang-switch button,.nav-gh,.nav-cv,.theme-toggle,.nav-toggle{touch-action:manipulation}
+.nav-links a,.lang-switch button,.nav-gh,.nav-cv,.theme-toggle,.nav-toggle{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+/* Press feedback. A native control responds when the finger lands, not when it lifts, and
+   :active is the only state that can do that without a pointerdown listener. */
+.nav-links a:active,.lang-switch button:active,.nav-gh:active{color:var(--fg);background:color-mix(in srgb,var(--fg) 9%,transparent)}
 .nav-right{display:flex;align-items:center;gap:1.2rem;justify-self:end}
 .lang-switch{display:flex;gap:.9rem}
 .lang-switch button{background:none;border:0;color:color-mix(in srgb,var(--fg) calc(55% * var(--dim)),transparent);font:.82rem var(--sans);cursor:pointer;padding:.2rem 0;letter-spacing:.03em;transition:color .2s;position:relative}
@@ -65,28 +91,8 @@ body.nav-open .nav-toggle span:nth-child(3){transform:translateY(-7px) rotate(-4
 
 /* The desktop bar needs ~940px before the links collide with the CV/GitHub/language
    cluster (widest case is Polish, at 804px of content). The old 720px breakpoint let it
-   overlap itself across a 220px band of widths, so the menu takes over earlier. */
-@media(max-width:980px){
-  .nav-toggle{display:flex}
-  /* The open menu only needs depth - the bar is already a themed frosted surface, so this
-     no longer has to replace its background. */
-  body.nav-open .site-nav{box-shadow:0 10px 24px -18px rgba(0,0,0,.8)}
-  body.nav-open .nav-cv{border-color:color-mix(in srgb,var(--fg) 40%,transparent)}
-  body.nav-open .lang-switch button{color:color-mix(in srgb,var(--fg) calc(58% * var(--dim)),transparent)}
-  body.nav-open .lang-switch button.active{color:var(--fg)}
-  /* justify-self would otherwise shrink this to its content width once it's an
-     absolutely-positioned grid item. */
-  /* Deliberately opaque, not frosted: a backdrop-filter nested inside the bar's own
-     backdrop-filter samples the parent's already-filtered result, which differs between
-     engines. A menu panel also wants the legibility. */
-  .nav-links{display:none;position:absolute;top:100%;left:0;right:0;justify-self:stretch;flex-direction:column;gap:0;padding:.5rem var(--edge) 1.4rem;background:var(--bg);border-bottom:1px solid color-mix(in srgb,var(--fg) 14%,transparent);box-shadow:0 18px 30px -22px rgba(0,0,0,.65)}
-  .nav-links a{color:var(--fg);padding:.95rem 0;border-bottom:1px solid color-mix(in srgb,var(--fg) 10%,transparent)}
-  .nav-links a:last-child{border-bottom:0}
-  .nav-links a.active{border-color:var(--accent-ink);color:var(--accent-ink)}
-  /* The panel drops in rather than snapping: it belongs to the toggle that opened it. */
-  body.nav-open .nav-links{display:flex;animation:nav-drop .3s var(--out) both;transform-origin:50% 0}
-  @keyframes nav-drop{from{opacity:0;transform:translateY(-8px)}}
-}
+   overlap itself across a 220px band of widths, so the menu takes over earlier. Everything
+   the mobile bar does differently is explained inside. */
 
 .nav-gh{display:flex;color:inherit;opacity:.75;transition:opacity .2s}
 .nav-gh svg{width:20px;height:20px;fill:currentColor}
@@ -103,4 +109,98 @@ body.nav-open .nav-toggle span:nth-child(3){transform:translateY(-7px) rotate(-4
   .lang-switch button:hover{color:color-mix(in srgb,var(--fg) calc(55% * var(--dim)),transparent)}
   .nav-gh:hover{opacity:.75}
   .nav-cv:hover{opacity:.8;background:none;border-color:color-mix(in srgb,var(--fg) 40%,transparent)}
+}
+
+/* The breakpoint block lives at the END of this file, not next to the rules it
+   overrides. .nav-gh and .nav-cv are declared further down, and they both set
+   properties this block sets too - display:flex on the GitHub link, padding on the
+   CV button. At equal specificity the later declaration wins, so while the block sat
+   above them the GitHub icon rendered in the CLOSED mobile bar (its display:none lost
+   to the base display:flex) and the sheet's CV button kept its 28px-tall desktop
+   padding instead of the touch target. Moving the block down fixes both by order
+   rather than by inflating selectors. */
+@media(max-width:980px){
+  .nav-toggle{display:flex}
+  /* THE SHEET IS THE NAV, NOT A PANEL HUNG OFF IT. The links used to leave the flow with
+     position:absolute and drop out of the bar, which left the bar holding the entire
+     right-hand cluster - CV, GitHub, EN/PL/NL, theme toggle, hamburger - on one line beside
+     the name. That is ~230px of cluster plus ~118px of name against ~270px of usable width on
+     a 320px phone, and minmax(0,1fr) does not stop the overflow: it only lets the cluster
+     slide left and print over the name, which is what it did at 390px too. So below this
+     breakpoint the nav grows into the sheet: the bar stays a bar, and the links and the
+     secondary cluster become two more lines of it.
+
+     FLEX, NOT GRID, FOR THE SHEET. The first attempt at this laid the three lines out as
+     grid rows, which cannot work here: a grid track is sized by the widest item in ANY row,
+     so the column the logo sits in is ~118px wide, and anything placed in the next column
+     starts 118px in - which stranded the CV at the left edge and threw the GitHub icon over
+     against the language switch. A row needs its own wrapper to pack two groups at opposite
+     ends, and the markup has no wrapper to give it. A wrapping flex line is packed at the
+     start by definition and knows nothing about the line above, so the cluster line gets its
+     own geometry for free: the two links sit against the left edge at every width, and
+     margin-left:auto on the language switch sends it to the other end.
+
+     Line breaks come from flex-wrap plus one 100%-wide item. .nav-links at flex:0 0 100%
+     fills the line it starts on and pushes everything after it onto a new one, so no
+     explicit line break is needed and the three lines stay in DOM order.
+
+     .nav-right goes display:contents so its five children join the nav as flex items and
+     can be ordered individually: the theme toggle and the hamburger stay on the bar line,
+     the other three drop to the cluster line. That is why the markup has never needed
+     reordering, and it leaves the desktop bar's column maths untouched. The div is a plain
+     wrapper with no role and no label, so dropping its box costs nothing - there are no
+     semantics for a screen reader to lose - but its gap and align-items go with it, so the
+     spacing is re-established by the nav's own gap below. */
+  .site-nav{display:flex;flex-wrap:wrap;align-content:flex-start;gap:0 .9rem}
+  /* margin-right:auto is what puts the theme toggle and the hamburger at the far end of the
+     bar line, and it costs nothing on the grid above because justify-self is a grid-only
+     property. */
+  .nav-logo{order:1;flex:none;margin-right:auto}
+  .theme-toggle{order:2}
+  .nav-toggle{order:3}
+  /* 40px, not the 28px the desktop bar gives these. 28 is a mouse target; a thumb wants
+     closer to Apple's 44, and the bar still measures inside the 5rem that scroll-padding
+     reserves for it. */
+  .theme-toggle,.nav-toggle{width:40px;height:40px}
+  .nav-right{display:contents}
+  .nav-links{order:4;flex:0 0 100%;display:none;flex-direction:column;gap:0;padding:.4rem 0 .8rem;border-bottom:1px solid color-mix(in srgb,var(--fg) 14%,transparent)}
+  .nav-cv{order:5;flex:none;margin-top:1.1rem}
+  .nav-gh{order:6;flex:none;margin-top:1.1rem}
+  .lang-switch{order:7;flex:none;margin-top:1.1rem;margin-left:auto}
+  /* Everything the sheet owns is hidden while it is shut. display:contents promoted these out
+     of .nav-right, so they no longer inherit its display:none - and display:none rather than
+     visibility also takes them out of the tab order and the accessibility tree, which is what
+     a closed menu has to do. */
+  .nav-cv,.nav-gh,.lang-switch{display:none}
+  body.nav-open .nav-cv,body.nav-open .nav-gh,body.nav-open .lang-switch{display:flex}
+  /* The open nav IS the sheet: it is fixed, so it simply grows downward from the bar line.
+     The frost comes off because the sheet is one element now - the bar line cannot stay glassy
+     while the lines under it are opaque. A menu wants the legibility anyway, which is why the
+     old dropdown panel was solid too: a backdrop-filter nested inside another one samples the
+     parent's already-filtered result and engines disagree about what that looks like. */
+  body.nav-open .site-nav{background:var(--bg);-webkit-backdrop-filter:none;backdrop-filter:none;border-bottom:1px solid color-mix(in srgb,var(--fg) 14%,transparent);box-shadow:0 18px 30px -22px rgba(0,0,0,.65);padding-bottom:calc(1.2rem + env(safe-area-inset-bottom,0px))}
+  body.nav-open .nav-links{display:flex;animation:nav-drop .3s var(--out) both}
+  /* A landscape phone is ~375px tall and bar + five links + the cluster line is more than
+     that. The cap goes on the link list rather than on the sheet, so the bar line and the
+     cluster line stay put: the sheet can then always be closed and the cluster always reached.
+     12rem covers both lines and the padding between them. dvh rather than vh because the
+     collapsing URL bar is exactly what makes the visible height smaller than 100vh on the
+     devices this shows up on. overscroll-behavior:contain keeps the rubber band inside the
+     list once it hits its end, instead of pulling the page behind the sheet. */
+  .nav-links{max-height:calc(100vh - 12rem);max-height:calc(100dvh - 12rem);overflow-y:auto;overscroll-behavior:contain}
+  /* Nothing here justifies itself, because there is no pointer to justify it with. */
+  .nav-links a{color:var(--fg);padding:.95rem 0;border-bottom:1px solid color-mix(in srgb,var(--fg) 10%,transparent)}
+  .nav-links a:last-child{border-bottom:0}
+  .nav-links a.active{border-color:var(--accent-ink);color:var(--accent-ink)}
+  /* The cluster's own targets. On the desktop bar these are inline-sized, which is right for
+     a mouse; in the sheet they are the only way to reach the CV and GitHub, so they take the
+     padding they need to clear 44px. */
+  .nav-cv{padding:.7rem .9rem}
+  .nav-gh{padding:.5rem}
+  .lang-switch button{padding:.6rem 0}
+  body.nav-open .nav-cv{border-color:color-mix(in srgb,var(--fg) 40%,transparent)}
+  body.nav-open .lang-switch button{color:color-mix(in srgb,var(--fg) calc(58% * var(--dim)),transparent)}
+  body.nav-open .lang-switch button.active{color:var(--fg)}
+  /* The panel drops in rather than snapping: it belongs to the toggle that opened it. */
+  @keyframes nav-drop{from{opacity:0;transform:translateY(-8px)}}
 }

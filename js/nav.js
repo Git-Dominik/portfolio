@@ -6,12 +6,22 @@
   (function(){
     var t = document.querySelector('.nav-toggle'), panel = document.getElementById('nav-links-panel');
     if(!t || !panel) return;
-    function open(){ document.body.classList.add('nav-open'); t.setAttribute('aria-expanded','true'); }
-    function close(){ document.body.classList.remove('nav-open'); t.setAttribute('aria-expanded','false'); }
+    function open(){ document.body.classList.add('nav-open'); t.setAttribute('aria-expanded','true'); focusFirst(); }
+    function close(){ var had = inSheet(); document.body.classList.remove('nav-open'); t.setAttribute('aria-expanded','false'); if(had && document.activeElement !== t) t.focus({preventScroll:true}); }
+    /* Focus follows the sheet. Opening leaves focus on the hamburger, which is visually the
+       LAST thing in the menu, so tabbing forward walks straight out of the open menu into the
+       page behind it. Closing does worse: the links go display:none and the browser drops
+       focus to <body>, stranding a keyboard or switch-control user at the top of the document.
+       Both are one line each, and the return trip is gated on focus actually being in the
+       sheet, so a menu closed at the breakpoint never steals focus from wherever the reader
+       had got to. */
+    function inSheet(){ var a = document.activeElement; return !!a && (panel.contains(a) || t.contains(a)); }
+    function focusFirst(){ var a = panel.querySelector('a'); if(a) a.focus({preventScroll:true}); }
     t.addEventListener('click', function(){ document.body.classList.contains('nav-open') ? close() : open(); });
     $$('.nav-links a').forEach(function(a){ a.addEventListener('click', close); });
     document.addEventListener('keydown', function(e){ if(e.key === 'Escape') close(); });
-    // A tap outside the panel dismisses it, the way every native menu behaves.
+    // A tap outside the sheet dismisses it, the way every native menu behaves. The check is
+    // still .site-nav, which on mobile is the sheet itself rather than a panel hung off it.
     document.addEventListener('click', function(e){
       if(!document.body.classList.contains('nav-open')) return;
       if(e.target.closest('.site-nav')) return;

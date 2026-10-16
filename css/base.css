@@ -32,7 +32,11 @@
      a brighter neutral competed with the headings above it. */
   --rule-line:#949ca6;
   --max:740px;
-  --edge:clamp(1.5rem,5vw,4rem);
+  /* max(), not clamp(): the page gutter has to clear the notch on a landscape phone, where
+     the horizontal safe-area inset is larger than the 1.5rem floor and the bar would put its
+     own text under the camera cutout. It reads 0px everywhere without viewport-fit=cover, so
+     on desktop and in portrait this is still exactly the clamp() it was. */
+  --edge:max(clamp(1.5rem,5vw,4rem),env(safe-area-inset-left,0px),env(safe-area-inset-right,0px));
   --ease:cubic-bezier(.65,0,.35,1);
   --out:cubic-bezier(.16,1,.3,1);
   --sweep:cubic-bezier(.5,.1,.2,1);
@@ -61,8 +65,11 @@
 }
 
 *{box-sizing:border-box}
-/* No scroll-snap: free, native scrolling. Anchor jumps stay smooth. */
-html{scroll-behavior:smooth;scroll-padding-top:5rem;color-scheme:dark}
+/* No scroll-snap: free, native scrolling. Anchor jumps stay smooth.
+   scroll-padding-top carries the same notch inset as the fixed bar's padding, or an anchor
+   jump lands the section heading under the bar on a notched phone. 5rem is measured against
+   the desktop bar (~59px) with room to spare, and the mobile bar is 72px. */
+html{scroll-behavior:smooth;scroll-padding-top:calc(5rem + env(safe-area-inset-top,0px));color-scheme:dark;-webkit-text-size-adjust:100%}
 /* body carries the hero's dark ground, which is also the whole dark theme. The scroll flip
    to the light palette is scoped to [data-theme=light], so dark mode stays dark from the
    first pixel to the last - there is no halfway state to be caught in. */
