@@ -161,8 +161,8 @@
           <li class="skill-tile"><i class="devicon-php-plain colored"></i><span>PHP</span></li>
           <li class="skill-tile"><i class="devicon-laravel-plain colored"></i><span>Laravel</span></li>
           <li class="skill-tile"><i class="devicon-symfony-original colored"></i><span>Symfony</span></li>
-          <li class="skill-tile skill-tile-plain"><span>Gin</span></li>
-          <li class="skill-tile skill-tile-plain"><span>Elysia</span></li>
+          <li class="skill-tile"><img class="skill-icon skill-icon-gin" src="media/gin.webp" alt="" width="28" height="28" loading="lazy" decoding="async"><span>Gin</span></li>
+          <li class="skill-tile"><img class="skill-icon skill-icon-elysia" src="media/elysia.svg" alt="" width="28" height="28" loading="lazy" decoding="async"><span>Elysia</span></li>
           <li class="skill-tile"><i class="devicon-prisma-plain colored"></i><span>Prisma</span></li>
         </ul>
       </div>
@@ -242,8 +242,12 @@
       <div class="project-eyebrow" data-i18n="projects.featured">Laatste Project</div>
       <h3 class="project-title">NyaasiAuto</h3>
       <p data-i18n="projects.nyaasi">Scraped nyaa.si RSS feed voor torrents uit een json config file en stuurt automataisch nieuwe gevonden episodes naar qBittorrent web ui.</p>
-      <div class="project-tags"><span class="tag tag-icon"><i class="devicon-go-plain colored"></i>Go</span><span class="tag">Gin</span><span class="tag">REST API</span></div>
+      <div class="project-tags"><span class="tag tag-icon"><i class="devicon-go-plain colored"></i>Go</span><span class="tag tag-icon"><img class="skill-icon skill-icon-gin" src="media/gin.webp" alt="" width="18" height="18" loading="lazy" decoding="async">Gin</span><span class="tag">REST API</span></div>
       <div class="project-actions">
+        <!-- The card is an <article>, not a link, because the two actions below are already
+             anchors and a card wrapping its own links would nest them. The detail page is one
+             more action rather than a wrapper around the whole card. -->
+        <a class="project-more-link project-more-arrow" href="projects/nyaasiauto.html" data-i18n="projects.readMore">Lees meer</a>
         <a class="btn-primary" href="https://github.com/Git-Dominik/NyaasiAuto" target="_blank" rel="noopener" data-i18n="projects.view">Bekijk op GitHub</a>
         <a class="project-more-link" href="https://github.com/Git-Dominik" target="_blank" rel="noopener" data-i18n="projects.more">Meer projecten op GitHub</a>
       </div>
@@ -251,25 +255,24 @@
     <div class="proj-more">
       <div class="label" data-i18n="projects.moreLabel">Meer projecten</div>
       <ul class="proj-list">
+        <!-- A project that has its own page under projects/ replaces the accordion button with a
+             plain <a class="proj-head"> pointing at it. The head markup is identical either way,
+             so the row keeps its height and its place in the list; only the trailing control
+             changes, from the plus that opens a panel to a "Lees meer" that navigates. The
+             description and the source link then live on that page instead of in the panel.
+             Bakkerai and qbit-service are both written this way; exhibition-launcher is still a
+             button because it has no page yet. -->
         <li class="proj-row">
-          <button class="proj-head" type="button" aria-expanded="false" aria-controls="proj-bakkerai">
-            <span class="proj-labels"><span class="proj-name">Bakkerai</span><span class="proj-sum" data-i18n="projects.bakkeraiSum">AI-chatbot voor bakkerijstudenten</span></span>
-            <span class="proj-plus" aria-hidden="true"></span>
-          </button>
-          <div class="proj-body" id="proj-bakkerai"><div class="proj-inner">
-            <p data-i18n="projects.bakkerai">Een ai chat bot waar bakkerijstudenten vragen stellen over recepten, technieken en theorie. Inloggen, chatgeschiedenis en een adminpagina om alles terug te lezen.</p>
-            <div class="proj-foot"><span class="tag tag-icon"><i class="devicon-bun-plain colored"></i>Bun</span><span class="tag tag-icon"><i class="devicon-typescript-plain colored"></i>TypeScript</span><span class="tag tag-icon"><i class="devicon-prisma-plain colored"></i>Prisma</span><span class="tag tag-icon"><i class="devicon-sqlite-plain colored"></i>SQLite</span><span class="tag">Elysia</span><a class="project-more-link" href="https://github.com/Git-Dominik/bakkerai" target="_blank" rel="noopener" data-i18n="projects.view">Bekijk op GitHub</a></div>
-          </div></div>
+          <a class="proj-head" href="projects/qbit-service.html">
+            <span class="proj-labels"><span class="proj-name">qbit-service</span><span class="proj-sum" data-i18n="projects.qbitSum">Kleine Go-dienst als brug naar qBittorrent</span></span>
+            <span class="proj-read" data-i18n="projects.readMore">Lees meer</span>
+          </a>
         </li>
         <li class="proj-row">
-          <button class="proj-head" type="button" aria-expanded="false" aria-controls="proj-qbit">
-            <span class="proj-labels"><span class="proj-name">qbit-service</span><span class="proj-sum" data-i18n="projects.qbitSum">Kleine Go-dienst als brug naar qBittorrent</span></span>
-            <span class="proj-plus" aria-hidden="true"></span>
-          </button>
-          <div class="proj-body" id="proj-qbit"><div class="proj-inner">
-            <p data-i18n="projects.qbit">Logt in op mijn lokale qBittorrent en stelt twee endpoints beschik: een om een torrent toe te voegen via magnetlink en een die de torrentlijst teruggeeft.</p>
-            <div class="proj-foot"><span class="tag tag-icon"><i class="devicon-go-plain colored"></i>Go</span><span class="tag">Gin</span><span class="tag">REST API</span><a class="project-more-link" href="https://github.com/Git-Dominik/qbit-service" target="_blank" rel="noopener" data-i18n="projects.view">Bekijk op GitHub</a></div>
-          </div></div>
+          <a class="proj-head" href="projects/bakkerai.html">
+            <span class="proj-labels"><span class="proj-name">Bakkerai</span><span class="proj-sum" data-i18n="projects.bakkeraiSum">AI-chatbot voor bakkerijstudenten</span></span>
+            <span class="proj-read" data-i18n="projects.readMore">Lees meer</span>
+          </a>
         </li>
         <li class="proj-row">
           <button class="proj-head" type="button" aria-expanded="false" aria-controls="proj-exhibition">

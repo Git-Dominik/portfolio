@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="nl" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>nyaasiauto · Dominik Krakowski</title>
+<meta name="description" content="Een klein Go-project dat anime-afleveringen op nyaa.si bijhoudt en nieuwe torrents automatisch naar qBittorrent stuurt.">
+<meta name="author" content="Dominik Krakowski">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#17171a" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#faf9f6" media="(prefers-color-scheme: light)">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="nyaasiauto · Dominik Krakowski">
+<meta property="og:description" content="Een klein Go-project dat anime-afleveringen op nyaa.si bijhoudt en nieuwe torrents automatisch naar qBittorrent stuurt.">
+<meta property="og:locale" content="nl_NL">
+<meta property="og:url" content="https://git-dominik.github.io/portfolio/projects/nyaasiauto.html">
+<meta property="og:image" content="https://git-dominik.github.io/portfolio/media/og-v3.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:alt" content="Illustratie van Dominik Krakowski">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="nyaasiauto · Dominik Krakowski">
+<meta name="twitter:description" content="Een klein Go-project dat anime-afleveringen op nyaa.si bijhoudt en nieuwe torrents automatisch naar qBittorrent stuurt.">
+<meta name="twitter:image" content="https://git-dominik.github.io/portfolio/media/og-v3.png">
+<link rel="canonical" href="https://git-dominik.github.io/portfolio/projects/nyaasiauto.html">
+
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,600,700,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/devicon/2.16.0/devicon.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/devicon/2.16.0/devicon.min.css"></noscript>
+<link rel="icon" type="image/png" sizes="32x32" href="../media/favicon/fav-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="../media/favicon/fav-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../media/favicon/fav-180.png">
+
+<!-- Same order as index.html, plus project.css last. The nav, theme, progress bar and wordmark
+     are the site's own, so a detail page inherits them rather than reimplementing them. -->
+<link rel="stylesheet" href="../css/base.css">
+<link rel="stylesheet" href="../css/nav.css">
+<link rel="stylesheet" href="../css/layout.css">
+<link rel="stylesheet" href="../css/skills.css">
+<link rel="stylesheet" href="../css/projects.css">
+<link rel="stylesheet" href="../css/contact.css">
+<link rel="stylesheet" href="../css/animations.css">
+<link rel="stylesheet" href="../css/reduced-motion.css">
+<link rel="stylesheet" href="../css/project.css">
+
+<!-- index.html also opens with <script>documentElement.classList.add('js')</script>, which holds the
+     nav's drop-in and the whole hero intro until the fonts land. It is deliberately NOT copied
+     here: .js:not(.go) is what keeps that intro from playing early, and on a page with no hero
+     the only thing it would gate is the nav bar itself - invisible for up to 2.5s before it
+     appears. Without the class the nav just fades in on load, which is what a content page wants. -->
+<!-- Same reason as index.html: the theme is decided before first paint, or the page renders a
+     frame in the wrong palette and then snaps. -->
+<script>
+(function(){
+  try{
+    var saved = localStorage.getItem('theme');
+    document.documentElement.dataset.theme =
+      (saved === 'light' || saved === 'dark') ? saved
+      : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  }catch(e){ document.documentElement.dataset.theme = 'light'; }
+})();
+</script>
+</head>
+<!-- .transitioned is what index.html's hero.js adds once the light palette takes over the lower
+     half of that page. There is no hero here and no scroll handler to add it, so the class is set
+     on the body directly - otherwise the light theme would resolve --bg and --fg to their DARK
+     values and this page would stay dark while the nav and the toggle said otherwise. The rule it
+     satisfies is scoped to [data-theme=light], so dark mode is untouched. -->
+<body class="pp transitioned">
+<!-- Filled in by js/chapters.js from the headings below. Empty in the markup on purpose: the
+     list is the page's own sections, and restating it here would be a second copy to keep
+     correct. With JS off it stays empty and the page reads top to bottom, which is the same
+     bargain the rest of this page makes. -->
+<nav class="pp-chapters" data-i18n-aria-label="pp.chapters" aria-label="Hoofdstukken"></nav>
+<a class="skip-link" href="#inhoud">Skip to content</a>
+<div class="progress" aria-hidden="true"></div>
+
+<nav class="site-nav" aria-label="Main">
+  <a href="../index.html" class="nav-logo" aria-label="Dominik Krakowski, terug naar de homepage">Dominik Krakowski</a>
+  <div class="nav-links" id="nav-links-panel">
+    <a href="../index.html#about" data-i18n="nav.about">Over mij</a>
+    <a href="../index.html#skills" data-i18n="nav.skills">Vaardigheden</a>
+    <a href="../index.html#experience" data-i18n="nav.experience">Ervaring</a>
+    <a href="../index.html#projects" data-i18n="nav.projects">Projecten</a>
+    <a href="../index.html#contact" data-i18n="nav.contact">Contact</a>
+  </div>
+  <div class="nav-right">
+    <a class="nav-cv" href="../media/Dominik_Krakowski_CV.pdf" download data-i18n="cv.nav">CV</a>
+    <a class="nav-gh" href="https://github.com/Git-Dominik" target="_blank" rel="noopener" aria-label="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
+    <div class="lang-switch" role="group" aria-label="Language">
+      <button data-lang="en" aria-pressed="false">EN</button>
+      <button data-lang="pl" aria-pressed="false">PL</button>
+      <button data-lang="nl" class="active" aria-pressed="true">NL</button>
+    </div>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-live="polite">
+      <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0-13a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0V5a1 1 0 0 1 1-1zm0 15a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0v-1a1 1 0 0 1 1-1zM4 11h1a1 1 0 1 1 0 2H4a1 1 0 1 1 0-2zm15 0h1a1 1 0 1 1 0 2h-1a1 1 0 1 1 0-2zM5.6 6.6a1 1 0 1 1 1.4 0l.7.7a1 1 0 1 1-1.4 1.4l-.7-.7a1 1 0 1 1 0-1.4zm10.6 10.6a1 1 0 1 1 1.4 0l.7.7a1 1 0 1 1-1.4 1.4l-.7-.7a1 1 0 1 1 0-1.4zm1.4-10.6a1 1 0 1 1 0 1.4l-.7.7A1 1 0 1 1 15.5 8l.7-.7a1 1 0 1 1 1.4 0zM7.3 17.9a1 1 0 1 1 0 1.4l-.7.7a1 1 0 1 1-1.4-1.4l.7-.7a1 1 0 1 1 1.4 0z"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      <span class="sr-only">Dark mode</span>
+    </button>
+    <button class="nav-toggle" aria-label="Menu" aria-expanded="false" aria-controls="nav-links-panel"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<div class="pp">
+  <!-- The page background: one continuous run of curves down the whole page, not a curve per
+       section. index.html hangs a .section-lines box inside each section, which is what makes
+       them read as decoration belonging to that section. Here they are the ground the whole
+       page sits on, so they are one layer, once, behind everything.
+
+       The curves are AUTHORED in an 800 x 1200 box - data-d holds that space, and the d that
+       ships is what a reader without JS sees. js/reveal.js re-fits both the viewBox and the
+       path data to the layer's real pixel size before anything is drawn, which is what keeps
+       the 1.4px stroke at 1.4px and the stroke-dash honest. See the .pp-bg block there.
+
+       pathLength="1" normalises each path's length so stroke-dasharray/stroke-dashoffset can
+       be written as 1 and mean "the whole line" however long the curve turns out - the same
+       trick .section-lines uses. -->
+  <div class="pp-bg" aria-hidden="true"><svg viewBox="0 0 800 1200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path pathLength="1" data-d="M -50 120 C 90 210, 210 30, 340 140 S 610 260, 700 90 S 950 40, 990 210" d="M -50 120 C 90 210, 210 30, 340 140 S 610 260, 700 90 S 950 40, 990 210"/>
+    <path pathLength="1" data-d="M -50 360 C 140 300, 230 450, 400 370 S 660 260, 760 410 S 900 370, 970 450" d="M -50 360 C 140 300, 230 450, 400 370 S 660 260, 760 410 S 900 370, 970 450"/>
+    <path pathLength="1" data-d="M -50 620 C 60 540, 260 680, 380 590 S 560 460, 720 600 S 880 720, 970 630" d="M -50 620 C 60 540, 260 680, 380 590 S 560 460, 720 600 S 880 720, 970 630"/>
+    <path pathLength="1" data-d="M -50 880 C 120 800, 180 960, 340 900 S 540 780, 640 920 S 900 870, 950 960" d="M -50 880 C 120 800, 180 960, 340 900 S 540 780, 640 920 S 900 870, 950 960"/>
+    <path pathLength="1" data-d="M -50 1080 C 90 1170, 210 990, 340 1100 S 610 1220, 700 1050 S 950 1000, 990 1170" d="M -50 1080 C 90 1170, 210 990, 340 1100 S 610 1220, 700 1050 S 950 1000, 990 1170"/>
+  </svg></div>
+  <header class="pp-head">
+    <div class="pp-wrap">
+      <a class="pp-back" href="../index.html#projects" data-i18n="pp.back">&larr; Alle projecten</a>
+      <h1 class="pp-title">nyaasiauto</h1>
+      <p class="pp-tagline" data-i18n-html="pp.nyaasi.tagline">Een klein Go-project om anime-afleveringen op nyaa.si bij te houden en nieuwe torrents automatisch naar qBittorrent te sturen.</p>
+      <!-- The skills board's own .skill-tiles, so each entry carries its real mark and lights in
+           that mark's own colour on hover - the :has() rules in css/skills.css, keyed on the
+           icon, same as on the main page. Go and OpenAPI are devicon glyphs; Gin has neither a
+           devicon class nor anything that could pass for one, so its mascot from gin-gonic.com
+           takes the same slot as an <img class="skill-icon">. All three are in the go.mod. -->
+      <ul class="skill-tiles pp-stack">
+        <li class="skill-tile"><i class="devicon-go-original-wordmark colored"></i><span>Go</span></li>
+        <li class="skill-tile"><img class="skill-icon skill-icon-gin" src="../media/gin.webp" alt="" width="28" height="28" loading="lazy" decoding="async"><span>Gin</span></li>
+        <li class="skill-tile"><i class="devicon-openapi-plain colored"></i><span>REST API</span></li>
+      </ul>
+      <div class="pp-actions">
+        <a class="btn-cv" href="https://github.com/Git-Dominik/NyaasiAuto" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.9 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.2.5-2.3 1.2-3.1-.1-.3-.5-1.6.1-3.1 0 0 1-.3 3.3 1.2a11 11 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.5.2 2.8.1 3.1.8.8 1.2 1.9 1.2 3.1 0 4.7-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>
+          <span data-i18n="pp.source">Bekijk op GitHub</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+<main class="pp-wrap" id="inhoud">
+    <!-- Everything below is the README in prose, with the code beside it. The exception is the
+         first section, which is the reason the project exists - that one is not in the README,
+         because a README cannot say why something should not have been built. -->
+
+    <section class="pp-section" id="waarom">
+      <h2 class="pp-h2" data-i18n="pp.why">Waarom ik dit heb gemaakt</h2>
+      <p data-i18n-html="pp.nyaasi.why">Elke paar uur naar nyaa.si om te kijken of er iets nieuws is, was een gewoonte geworden. Dus: een script dat het voor me doet. Het kijkt naar de anime die ik volg, en zodra er een nieuwe aflevering verschijnt stuur ik die meteen door naar qBittorrent.</p>
+      <p data-i18n-html="pp.nyaasi.why2">Het is een persoonlijk script om anime bij te houden zonder elke paar uur zelf naar nyaa.si te hoeven kijken.</p>
+    </section>
+
+    <section class="pp-section" id="doet">
+      <h2 class="pp-h2" data-i18n="pp.does">Wat het doet</h2>
+      <ul class="pp-list">
+        <li data-i18n-html="pp.nyaasi.does1">Leest de anime-doelen uit <code>config.json</code></li>
+        <li data-i18n="pp.nyaasi.does2">Controleert de nyaa.si RSS-feeds op nieuwe afleveringen</li>
+        <li data-i18n="pp.nyaasi.does3">Matcht de ingestelde uploaders</li>
+        <li data-i18n-html="pp.nyaasi.does4">Stuurt nieuwe magnetlinks naar de lokale qBittorrent-brug</li>
+        <li data-i18n="pp.nyaasi.does5">Onthoudt de laatst geziene aflevering, zodat oude episodes niet steeds opnieuw worden toegevoegd</li>
+      </ul>
+    </section>
+
+    <section class="pp-section" id="delen">
+      <h2 class="pp-h2" data-i18n="pp.nyaasi.partsTitle">Hoofd-onderdelen</h2>
+      <ul class="pp-list">
+        <li data-i18n-html="pp.nyaasi.parts1"><code>cmd/qbit-service</code> — de lokale qBittorrent-brug</li>
+        <li data-i18n-html="pp.nyaasi.parts2"><code>cmd/rss-scraper</code> — controleert op nieuwe afleveringen en stuurt de torrents door</li>
+      </ul>
+      <p data-i18n-html="pp.nyaasi.partsBody">De brug is <a href="qbit-service.html" data-i18n="pp.nyaasi.qbitLink">qbit-service</a>, dat staat ook als los project in de map.</p>
+    </section>
+
+    <section class="pp-section" id="feed">
+      <h2 class="pp-h2" data-i18n="pp.nyaasi.feedTitle">De feed zoeken</h2>
+      <p data-i18n-html="pp.nyaasi.feedBody">Per anime-titel en per uploader wordt een RSS-feed opgebouwd. De dubbele punt uit de titel gaat eruit, want die zou de zoekopdracht onleesbaar maken.</p>
+      <div class="snippet">
+        <div class="snippet-bar"><span class="lang">Go</span><span class="file">parser.go</span></div>
+<pre><code data-lang="go">func buildNyaaURL(animeTitle string, uploader string) string {
+	cleanTitle := strings.ReplaceAll(animeTitle, ":", "")
+
+	searchQuery := fmt.Sprintf("[%s] %s", uploader, cleanTitle)
+
+	baseURL := "https://nyaa.si/?page=rss&amp;c=0_0&amp;f=0&amp;q="
+	return baseURL + url.QueryEscape(searchQuery)
+}</code></pre>
+      </div>
+      <p data-i18n-html="pp.nyaasi.feedBody2">Uit elke item-titel wordt het seizoen en het afleveringsnummer gehaald. De regex accepteert drie schrijfwijzen en het seizoen is optioneel:</p>
+      <div class="snippet">
+        <div class="snippet-bar"><span class="lang">Go</span><span class="file">parser.go</span></div>
+<pre><code data-lang="go">var episodeRegex = regexp.MustCompile(`(?i)(?:S(\d{1,2}))?\s*(?:E|Episode|\s+-\s+)\s*(\d{2,3})`)
+
+func extractEpisode(title string) (int, int, bool) {
+	matches := episodeRegex.FindStringSubmatch(title)
+
+	if len(matches) &lt; 3 {
+		return 0, 0, false
+	}
+
+	season := 1
+	if matches[1] != "" {
+		season, _ = strconv.Atoi(matches[1])
+	}
+
+	episode, err := strconv.Atoi(matches[2])
+	if err != nil {
+		return 0, 0, false
+	}
+
+	return season, episode, true
+}</code></pre>
+      </div>
+    </section>
+
+    <section class="pp-section" id="herkennen">
+      <h2 class="pp-h2" data-i18n="pp.nyaasi.matchTitle">Een nieuwe aflevering herkennen</h2>
+      <p data-i18n-html="pp.nyaasi.matchBody">Het script zoekt niet de nieuwste aflevering, maar precies de volgende: seizoen en afleveringsnummer uit <code>config.json</code>, plus één. Alleen bij een exacte match gaat er iets door naar de brug.</p>
+      <div class="snippet">
+        <div class="snippet-bar"><span class="lang">Go</span><span class="file">main.go</span></div>
+<pre><code data-lang="go">expectedSeason := targets[i].LatestSeen.Season
+expectedEpisode := targets[i].LatestSeen.Episode + 1
+
+for _, item := range feed.Items {
+	season, episode, found := extractEpisode(item.Title)
+	if !found {
+		continue
+	}
+
+	if season == expectedSeason &amp;&amp; episode == expectedEpisode {
+		if err := torrentLinks(item.Link); err != nil {
+			fmt.Println("Failed to add torrent, make sure qbit-service is running")
+			continue
+		}
+
+		episodeTag := fmt.Sprintf("S%02dE%02d", season, episode)
+		fmt.Println("[NEW EPISODE]", episodeTag, item.Title)
+		fmt.Println(item.Link)
+
+		targets[i].LatestSeen.Season = season
+		targets[i].LatestSeen.Episode = episode
+		targets[i].saveProgress(configFilePath, targets)
+		fmt.Println(targets[i].LatestSeen)
+		break
+	}
+}</code></pre>
+      </div>
+      <p data-i18n-html="pp.nyaasi.matchBody2">De hele lijst wordt daarna teruggeschreven naar <code>config.json</code>, zodat de voortgang de volke ronde overleeft:</p>
+      <div class="snippet">
+        <div class="snippet-bar"><span class="lang">Go</span><span class="file">config.go</span></div>
+<pre><code data-lang="go">func (t *Target) saveProgress(configFilePath string, targets []Target) error {
+	updateJson, err := json.MarshalIndent(targets, "", " ")
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	return os.WriteFile(configFilePath, updateJson, 0644)
+}</code></pre>
+      </div>
+    </section>
+
+    <section class="pp-section" id="instellen">
+      <h2 class="pp-h2" data-i18n="pp.require">Vereisten</h2>
+      <ul class="pp-list">
+        <li data-i18n="pp.nyaasi.require1">Go geïnstalleerd</li>
+        <li data-i18n="pp.nyaasi.require2">Een qBittorrent Web UI die lokaal draait</li>
+      </ul>
+
+      <p data-i18n-html="pp.nyaasi.envTitle">Een <code>.env</code>-bestand in <code>cmd/qbit-service</code>:</p>
+      <div class="snippet">
+        <div class="snippet-bar"><span class="lang">env</span><span class="file">cmd/qbit-service/.env</span></div>
+<pre><code>qbUsr=your_username
+qbPass=your_password</code></pre>
+      </div>
+
+      <p data-i18n-html="pp.nyaasi.configTitle">Een <code>config.json</code> in de projectroot met je animelijst:</p>
+      <div class="snippet">
+        <div class="snippet-bar"><span class="lang">json</span><span class="file">config.json</span></div>
+<pre><code data-lang="json">[
+  {
+    "title": "Anime Title 1",
+    "uploaders": ["UploaderA", "UploaderB"],
+    "latest_seen": {
+      "season": 1,
+      "episode": 12
+    }
+  },
+  {
+    "title": "Anime Title 2",
+    "uploaders": ["UploaderA", "UploaderB"],
+    "latest_seen": {
+      "season": 2,
+      "episode": 5
+    }
+  }
+]</code></pre>
+      </div>
+      <p data-i18n="pp.nyaasi.configBody">Je kunt zo veel anime-titels toevoegen als je wilt.</p>
+    </section>
+
+    <section class="pp-section" id="starten">
+      <h2 class="pp-h2" data-i18n="pp.run">Starten</h2>
+      <p data-i18n="pp.nyaasi.runBridge">Start eerst de qBittorrent-brug:</p>
+      <div class="snippet">
+        <div class="snippet-bar"><span class="lang">bash</span><span class="file">terminal</span></div>
+<pre><code data-lang="sh">go run cmd/qbit-service</code></pre>
+      </div>
+      <p data-i18n="pp.nyaasi.runScraper">En daarna de scraper:</p>
+      <div class="snippet">
+        <div class="snippet-bar"><span class="lang">bash</span><span class="file">terminal</span></div>
+<pre><code data-lang="sh">go run cmd/rss-scraper</code></pre>
+      </div>
+    </section>
+
+    <section class="pp-section" id="beperkingen">
+      <h2 class="pp-h2" data-i18n="pp.limits">Wat er nog niet is</h2>
+      <ul class="pp-list">
+        <li data-i18n-html="pp.nyaasi.limit1"><strong>De eerste uploader die matcht wint.</strong> De uploaders gaan op volgorde langs en zodra er iets gevonden is stopt de lus. De rest van de lijst wordt die ronde niet eens gecontroleerd.</li>
+        <li data-i18n-html="pp.nyaasi.limit2"><strong>De regex mist veel schrijfwijzen.</strong> <code>S01E02</code>, <code>Episode 05</code> en <code>- 12</code> worden herkend, een kale <code>12</code> of <code>1x12</code> niet. Staat het seizoen er niet, dan wordt het seizoen 1.</li>
+      </ul>
+    </section>
+
+    <nav class="pp-next" aria-label="Projecten">
+      <a href="../index.html#projects" data-i18n="pp.back">&larr; Alle projecten</a>
+      <!-- .next walks the list on the index in order, and this is the end of it: exhibition-launcher
+           is the row below this one and it has no page yet, so there is nothing to walk to. The
+           link back is "Alle projecten" above. -->
+    </nav>
+  </main>
+</div>
+
+<div class="closing pp-foot">
+  <div class="closing-bloom" aria-hidden="true"></div>
+  <canvas class="closing-wave" aria-hidden="true"></canvas>
+  <footer class="foot">
+    <div class="wordmark" id="wordmark" aria-hidden="true"><span class="out">Dominik</span><span class="fill">Dominik</span></div>
+    <div class="foot-row">
+      <span data-i18n="footer.text">© 2026 Dominik</span>
+      <button class="top" id="toTop" type="button" data-i18n="footer.top">Naar boven</button>
+    </div>
+  </footer>
+</div>
+
+<script defer src="../js/core.js"></script>
+<script defer src="../js/theme.js"></script>
+<script defer src="../js/i18n.js"></script>
+<script defer src="../js/herowave.js"></script>
+<script defer src="../js/nav.js"></script>
+<script defer src="../js/reveal.js"></script>
+<script defer src="../js/ui.js"></script>
+<script defer src="../js/chapters.js"></script>
+<script defer src="../js/highlight.js"></script>
+</body>
+</html>

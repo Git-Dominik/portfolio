@@ -42,7 +42,23 @@
    Prisma #2d3748, Linux #000) and deepens the ones that would vanish on cream (JavaScript,
    Python, Bun). Used raw, four tiles would have had no visible hover in dark and three none
    in light. The hue survives the mix - it is a lighter or darker tint of the same colour,
-   not a different one. */
+   not a different one.
+
+   devicon-openapi is here for the project pages, which reuse these tiles for a project's
+   stack rather than for the index. Adding one is exactly the one line it is meant to be -
+   no markup, no per-tile class. */
+
+   .skill-icon is the other half of that: the tile icon is not only ever a devicon glyph. Gin
+   has none in the set and its own mascot is the mark everyone recognises, so media/gin.webp
+   comes from gin-gonic.com and drops into the same slot. The :has() key is on the wrapper so
+   one rule covers both an <img class="skill-icon"> and a devicon <i>, with no second
+   selector list to keep in sync. */
+.skill-tile:has(.skill-icon-gin){--skill:0,158,224}
+/* Elysia's logo from elysiajs.com is a greyscale mark, the same situation as Gin's mascot:
+   no devicon class, and a source that is already in the tile's own colour family - so at rest it
+   greys out with everything else and only its :before glow carries the brand. The value is the
+   pink the framework uses across its own site. */
+.skill-tile:has(.skill-icon-elysia){--skill:244,114,182}
 .skill-tile:has(.devicon-blazor-original){--skill:92,45,145}
 .skill-tile:has(.devicon-bootstrap-plain){--skill:113,44,249}
 .skill-tile:has(.devicon-bun-plain){--skill:251,240,223}
@@ -55,6 +71,7 @@
 .skill-tile:has(.devicon-javascript-plain){--skill:240,219,79}
 .skill-tile:has(.devicon-laravel-plain){--skill:240,81,63}
 .skill-tile:has(.devicon-linux-plain){--skill:0,0,0}
+.skill-tile:has(.devicon-openapi-plain){--skill:107,165,57}
 .skill-tile:has(.devicon-php-plain){--skill:119,123,179}
 .skill-tile:has(.devicon-prisma-plain){--skill:45,55,72}
 .skill-tile:has(.devicon-python-plain){--skill:255,216,69}
@@ -70,10 +87,23 @@
    be handed to rgb() as a channel list. */
 .skill-tile::before{content:"";position:absolute;inset:0;background:radial-gradient(160px circle at var(--mx,50%) var(--my,0%),color-mix(in srgb,var(--skill-glow) 28%,transparent),transparent 70%);opacity:0;transition:opacity .3s;pointer-events:none}
 .skill-tile i{position:relative;font-size:1.4rem;line-height:1;filter:grayscale(1);opacity:.7;transition:filter .3s,opacity .3s,transform .4s var(--spring)}
+/* An <img> in the icon slot, for the marks devicon does not carry. Sized to the glyph it sits
+   beside rather than to its own pixels: devicon renders at 1.4rem with a square em box, and
+   anything else would make the tile jump between one that has an icon and one that does not.
+   object-fit:contain so a non-square source is letterboxed inside that box rather than cropped.
+   The mascot has an alpha channel and transparent margins, so it needs no background of its own
+   and inherits the same grayscale/opacity rest as the glyphs - which is why it greys out at rest
+   and colours up on hover exactly like they do, instead of sitting permanently in full colour.
+
+   1.7rem rather than the glyphs' 1.4rem, and the one deliberate exception: media/gin.webp is
+   cropped to its own alpha, so it carries no transparent margin, but it is a drawing rather than
+   a solid mark and reads thinner at the same height. The bump is what puts it at the same
+   visual weight as Go's wordmark beside it. */
+.skill-tile img.skill-icon{position:relative;width:1.7rem;height:1.4rem;object-fit:contain;filter:grayscale(1);opacity:.7;transition:filter .3s,opacity .3s,transform .4s var(--spring)}
 .skill-tile span{position:relative}
 .skill-tile:hover{border-color:var(--accent-solid);transform:translateY(-3px)}
 .skill-tile:hover::before{opacity:1}
-.skill-tile:hover i{filter:none;opacity:1;transform:scale(1.12) rotate(-4deg)}
+.skill-tile:hover i,.skill-tile:hover img.skill-icon{filter:none;opacity:1;transform:scale(1.12) rotate(-4deg)}
 /* No devicon glyph for these, so the tile keeps its own padding balance */
 .skill-tile-plain{padding-left:1rem}
 /* Touch-only: a tap latches :hover, so drop the lift, the spotlight and the icon pop.
@@ -81,8 +111,8 @@
 @media(hover:none){
   .skill-tile:hover{transform:none;border-color:color-mix(in srgb,var(--fg) 12%,transparent)}
   .skill-tile:hover::before{opacity:0}
-  .skill-tile:hover i{filter:none;opacity:1;transform:none}
-  .skill-tile i{filter:none;opacity:1}
+  .skill-tile:hover i,.skill-tile:hover img.skill-icon{filter:none;opacity:1;transform:none}
+  .skill-tile i,.skill-tile img.skill-icon{filter:none;opacity:1}
 }
 @media(max-width:640px){.skill-board{grid-template-columns:1fr}}
 

@@ -1,0 +1,270 @@
+/* PROJECT PAGES (projects/*.html)
+   Same tokens, same type, same glass as index.html - a detail page should feel like a
+   different page of the same site, not a second site. What it borrows structurally is the
+   long-form project write-up: a masthead (title, one-line pitch, meta pills, source link),
+   then a run of prose sections separated by hairlines, with real code in framed blocks.
+
+   The wrappers are .pp-* rather than the names used elsewhere on purpose. Everything here is
+   prefixed so a project page can be added without touching a single rule index.html relies
+   on, and so the two stylesheets can both be loaded here without either reaching into the
+   other's vocabulary. */
+
+/* ---- Syntax palette ----
+   Defined per theme rather than borrowed from the --greet-* set. Those three are chosen for
+   large display type, where a whole word is read at a glance; code needs five levels that
+   stay apart from each other AND from the page behind them, and two of the greeting colours
+   are too close together to carry two token classes. Measured against their own --code-bg,
+   every value below clears 4.6:1, the strings and comments most of the way past 5:1. */
+[data-theme=dark]{--code-bg:#101012;--code-fg:#d9dadc;--tok-key:#9aa6ff;--tok-typ:#c79bff;--tok-str:#8fd9a8;--tok-com:#8a8e97}
+[data-theme=light]{--code-bg:#f1f0ea;--code-fg:#22242a;--tok-key:#4a4fd0;--tok-typ:#7b3fd4;--tok-str:#1f7a4d;--tok-com:#5b6270}
+
+/* Monospace. Nothing is loaded for it - Satoshi has no mono companion here and pulling in a
+   second family for a dozen code blocks would cost more than it returns. The stack leads with
+   the platform faces so each OS renders its own, which is also the one every reader already
+   associates with code. */
+.pp{--mono:ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace;position:relative}
+
+/* ---- The background layer ----
+   The curves, once, down the whole page. index.html draws them one section at a time inside
+   .section-lines; here they are the ground rather than a decoration per section, so they live
+   in one box behind .pp.
+
+   z-index:-1 against .pp's own positioning context puts it behind the content and behind
+   .pp's (empty) background, which is the same trick .section-lines uses on index.html.
+   inset:0 rather than a top offset, so it follows however far the copy runs. */
+.pp-bg{position:absolute;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.pp-bg svg{width:100%;height:100%;display:block}
+/* No vector-effect here, deliberately. It is the obvious answer to stroke-width being scaled
+   by the svg transform, and it is wrong: non-scaling-stroke measures the dash pattern in
+   screen space while pathLength="1" normalises it in user space, and once those disagree the
+   dash stops tracking the path - a line that should grow from its start instead renders as the
+   head of the line plus a detached stub. js/reveal.js refits the viewBox to the layer's real
+   pixel size instead, which leaves the mapping at 1:1 so the stroke is 1.4px as written and
+   the dash measures the real path. See the .pp-bg block there. */
+.pp-bg path{fill:none;stroke:color-mix(in srgb,var(--fg) 16%,transparent);stroke-width:1.4;stroke-dasharray:1;stroke-dashoffset:1}
+/* The draw-in, character for character index.html's: same 2.6s, same cubic-bezier(.4,0,.2,1),
+   triggered by .in-view rather than by the section observer. Only the delays are new - a
+   .section-lines box holds one or two paths and they arrive together, whereas this is five
+   curves down one page, and five lines drawing simultaneously reads as one graphic appearing
+   instead of as a background being drawn. The delays sit in their own rule because the
+   transition shorthand above resets transition-delay to 0. */
+.pp-bg.in-view path{stroke-dashoffset:0;transition:stroke-dashoffset 2.6s cubic-bezier(.4,0,.2,1)}
+.pp-bg.in-view path:nth-child(2){transition-delay:.16s}
+.pp-bg.in-view path:nth-child(3){transition-delay:.32s}
+.pp-bg.in-view path:nth-child(4){transition-delay:.48s}
+.pp-bg.in-view path:nth-child(5){transition-delay:.64s}
+
+/* ---- Measure ----
+   index.html caps at --max (740px), which is right for a one-screen-past summary. Prose with
+   code in it needs more room than that or the blocks scroll horizontally on every laptop
+   screen, so these pages run wider and hold the measure back on the text instead.
+
+   --pp-col is the measure itself, named because the chapter rail has to find the gutter beside
+   this column rather than guess at it from the viewport width.
+
+   overflow-x:clip is #content's job carried over, not tidiness. <main> here is deliberately
+   not #content - see the note on .pp-section - and without this the 100vw background layer
+   would push the page sideways. clip rather than hidden: hidden would make .pp a scroll
+   container for its own decoration, which is the dead-scrollbar problem layout.css had to
+   design around in .closing. */
+.pp{--pp-col:62rem}
+.pp-wrap{max-width:var(--pp-col);margin:0 auto;padding:0 var(--edge);overflow-x:clip}
+
+/* ---- Masthead ---- */
+.pp-head{padding:9.5rem 0 3.4rem;border-bottom:1px solid color-mix(in srgb,var(--fg) 14%,transparent);position:relative}
+/* The fixed nav is ~59px tall on desktop and 72px on mobile, so this clears it on both. */
+.pp-back{display:inline-flex;align-items:center;gap:.45rem;font:.9rem var(--sans);text-decoration:none;color:color-mix(in srgb,var(--fg) calc(64% * var(--dim)),transparent);margin-bottom:2.2rem;transition:color .2s;white-space:nowrap;-webkit-tap-highlight-color:transparent}
+.pp-back:hover{color:var(--fg)}
+.pp-title{font-size:clamp(2.3rem,6.5vw,3.8rem);font-weight:300;letter-spacing:-.02em;line-height:1.04;margin:0 0 1.1rem;overflow-wrap:break-word}
+.pp-tagline{font-size:1.1rem;line-height:1.6;color:color-mix(in srgb,var(--fg) calc(80% * var(--dim)),transparent);max-width:46rem;margin:0 0 2rem}
+
+/* The stack row: the skills board's own .skill-tiles, reused. Only the spacing is ours, and
+   only because .skill-tiles carries no margin of its own - on the main page it sits inside a
+   .skill-panel that supplies the room. */
+.pp-stack{margin:0 0 2.1rem}
+.pp-actions{display:flex;flex-wrap:wrap;gap:.75rem}
+
+/* ---- Sections ---- */
+/* These are <section>, so they pick up the global section rule in layout.css: the 740px cap,
+   the 5.5rem top padding and a scroll-margin-top. The first two are reset below.
+
+   The scroll-margin is zeroed rather than kept. The global rule pairs it with <html>'s
+   scroll-padding-top, and the two are additive - a chapter-rail click would land a section two
+   nav-heights down, under the heading it just navigated to. One of the two has to go, and
+   scroll-padding is the one that also covers the browser's own back/forward restoration.
+
+   What these must NOT pick up is the section floor - `[data-theme] #content section::before`, a
+   100vw pseudo at 98% of --bg in light and 87% in dark, drawn under every section to give the
+   middle of the page a ground of its own. That rule is keyed to #content, and <main> here is
+   deliberately NOT #content: it is #inhoud, so the skip link still resolves and the floor simply
+   does not match. Overriding it instead would have meant beating (2,2,2) with !important,
+   which is not a trade worth making for one pseudo-element. Losing the floor costs this page
+   the step between sections, and it is a good trade: the floor is 100vw wide against a 992px
+   content column, so on this page it read as a slab down the middle rather than as depth.
+
+   position:relative is kept anyway, matching index.html, so that a z-index:-1 child added here
+   later lands behind this section's content rather than behind the page. */
+.pp-section{padding:3.1rem 0 0;margin:0;max-width:none;position:relative;scroll-margin-top:0}
+.pp-section+.pp-section{margin-top:3.1rem;border-top:1px solid color-mix(in srgb,var(--fg) 12%,transparent)}
+.pp-h2{font-size:clamp(1.5rem,3.2vw,1.95rem);font-weight:300;letter-spacing:-.01em;line-height:1.2;margin:0 0 1.1rem;max-width:var(--max)}
+/* The endpoint names. A third level would be too deep - a project page has one .pp-h2 per
+   section and these sit under the one section that carries them - so this is a label, not a
+   heading: monospace, at the size of body text, in the accent rather than at display weight. */
+.pp-h3{font:600 .95rem var(--mono);letter-spacing:.01em;color:var(--accent-ink);margin:2rem 0 .6rem}
+.pp-section>p{color:color-mix(in srgb,var(--fg) calc(80% * var(--dim)),transparent);font-size:1.02rem;line-height:1.72;max-width:44rem}
+/* A top margin on the paragraph, because the gap above one normally comes from the block before
+   it - and .snippet and .pp-list both end at margin:0, so a paragraph following either landed
+   flush against it with no space at all. Collapsing keeps it to one gap rather than two, so the
+   1.25rem here is the distance you actually see. */
+.pp-section>p{margin-top:1.25rem}
+.pp-section>p a{color:var(--fg);text-decoration-color:color-mix(in srgb,var(--fg) 35%,transparent);text-underline-offset:3px}
+.pp-section>p a:hover{text-decoration-color:var(--accent-ink)}
+.pp-section strong{color:var(--fg);font-weight:600}
+
+/* Prose list. The marker is the accent so the list reads as the page's, not as a browser
+   default - bullets here are at --dim grey and the rest of the body is a full step brighter.
+   .pp-list, not .why-list: nothing on these pages argues a case any more. They are the
+   README's own bullet lists - what the service does, what it needs - and naming them after a
+   rhetorical role they no longer have would be the kind of drift the rest of this file is
+   written to avoid. */
+.pp-list{margin:0;padding-left:1.2rem;max-width:44rem;color:color-mix(in srgb,var(--fg) calc(80% * var(--dim)),transparent);font-size:1.02rem;line-height:1.72}
+.pp-list li{margin-bottom:.85rem;padding-left:.35rem}
+.pp-list li:last-child{margin-bottom:0}
+.pp-list li::marker{color:var(--accent-ink)}
+
+/* Inline code. --fg at low alpha on a --fg hairline, so it picks up the theme the way the
+   panels do rather than introducing a fourth surface colour. */
+.pp code{font-family:var(--mono);font-size:.86em;padding:.12em .38em;background:color-mix(in srgb,var(--fg) 7%,transparent);border:1px solid color-mix(in srgb,var(--fg) 14%,transparent);color:var(--fg);overflow-wrap:break-word}
+
+/* ---- Code blocks ---- */
+.snippet{margin:1.9rem 0 0;border:1px solid color-mix(in srgb,var(--fg) 14%,transparent);background:var(--code-bg);max-width:52rem}
+.snippet-bar{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.6rem .95rem;border-bottom:1px solid color-mix(in srgb,var(--fg) 12%,transparent);font:.76rem var(--mono);color:color-mix(in srgb,var(--fg) calc(58% * var(--dim)),transparent)}
+/* The language sits where a status would, so it takes the accent; the filename on the right is
+   context and stays grey. */
+.snippet-bar .lang{color:var(--accent-ink);text-transform:uppercase;letter-spacing:.08em}
+.snippet-bar .file{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* tab-size matches gofmt's default so a pasted Go snippet lines up with what the editor shows. */
+.snippet pre{margin:0;padding:1.2rem 1.3rem;overflow-x:auto;font-family:var(--mono);font-size:.84rem;line-height:1.72;color:var(--code-fg);tab-size:4;-webkit-overflow-scrolling:touch}
+.snippet pre code{padding:0;border:0;background:none;font-size:inherit;color:inherit;white-space:pre;overflow-wrap:normal}
+/* The caption under a block. Written as .pp-section>p.snippet-note rather than as !important:
+   it is a <p> inside a section, so the generic .pp-section>p rule above outranks a bare class,
+   and two classes plus an element is enough to win without the override. */
+.pp-section>p.snippet-note{margin:.8rem 0 0;font-size:.95rem;color:color-mix(in srgb,var(--fg) calc(62% * var(--dim)),transparent)}
+
+/* Syntax tokens. Five classes and nothing else, kept close in weight so a block reads as one
+   system rather than a rainbow. Scoped under .pp so the names stay local to the pages that use
+   them - js/highlight.js assigns them, and a language it has no rules for renders as plain
+   --code-fg rather than as a partially coloured block. */
+.pp .tok-com{color:var(--tok-com);font-style:italic}
+.pp .tok-key{color:var(--tok-key)}
+.pp .tok-typ{color:var(--tok-typ)}
+.pp .tok-str{color:var(--tok-str)}
+.pp .tok-num{color:var(--tok-typ)}
+
+/* ---- Facts ----
+   Deliberately absent. This page has no fact grid; the stack it used to carry is the skills
+   board's .skill-tiles in the masthead instead, and css/skills.css is loaded for it. */
+
+/* ---- Prev / next ----
+   The walk to the neighbouring project. Present on the page with one project as a single
+   left-pointing link - the way it is used here - and takes a right-hand sibling the moment a
+   second detail page exists, without needing new markup for it.
+
+   The 4.5rem underneath is the fix for the back link sitting on the wordmark. This is the last
+   thing in <main> and index.html gets its floor from the contact section above its footer; here
+   there is nothing between the two, and the footer's own 3rem top padding is not enough against
+   a 19rem outlined wordmark that reads as far taller than it is. */
+.pp-next{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:1rem;padding:2.6rem 0 4.5rem;margin-top:3.1rem;border-top:1px solid color-mix(in srgb,var(--fg) 12%,transparent)}
+.pp-next a{display:inline-flex;align-items:center;gap:.5rem;font:.92rem var(--sans);text-decoration:none;color:color-mix(in srgb,var(--fg) calc(70% * var(--dim)),transparent);transition:color .2s}
+.pp-next a:hover{color:var(--fg)}
+.pp-next .next{margin-left:auto}
+
+/* ---- Chapter rail ----
+   The fixed list of the page's own sections down the left side, built by js/chapters.js out of
+   the headings that are already there.
+
+   left is measured from the content column rather than from the viewport edge, so the rail sits
+   a fixed distance to the left of the text at every width instead of drifting further out as the
+   window grows. --pp-col is the same measure .pp-wrap uses, which is why it is declared there
+   and read here. */
+.pp-chapters{
+  position:fixed;
+  /* max() so the rail never runs off the left edge on a window just wide enough to show it: past
+     this width there is a real gutter to sit in, before it there is not and the media query below
+     takes the rail away entirely. */
+  left:max(1.25rem, calc((100vw - var(--pp-col)) / 2 - 14rem));
+  width:13rem;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:40;
+  display:grid;
+  gap:.1rem;
+  transition:opacity .3s var(--ease),visibility .3s var(--ease);
+}
+/* Hidden while the masthead is still on screen: it already names the project, and the sections
+   have not begun. js/chapters.js toggles this on the masthead's bottom edge. */
+.pp-chapters.is-at-top{opacity:0;visibility:hidden;pointer-events:none}
+.pp-chapters a{
+  display:grid;
+  grid-template-columns:1.4rem 1fr;
+  align-items:baseline;
+  gap:.5rem;
+  padding:.4rem .5rem;
+  border-left:1px solid color-mix(in srgb,var(--fg) 16%,transparent);
+  font:.75rem/1.35 var(--sans);
+  color:color-mix(in srgb,var(--fg) calc(46% * var(--dim)),transparent);
+  text-decoration:none;
+  transition:color .25s,border-color .25s,background-color .25s;
+  -webkit-tap-highlight-color:transparent;
+}
+.pp-ch-num{font:.62rem var(--mono);color:inherit}
+/* Past and current both go UP to --fg rather than to --accent-ink, which is the rule css/projects.css
+   already applies to .proj-name for the same reason: under the slate palette the accent reads as
+   the de-emphasised colour, so a chapter that brightens on the way past you would look dimmer
+   than one you have not reached. Which one you are in is carried by the wash and the border
+   colour, not by the text being brighter.
+
+   The headings are real sentences - "Een nieuwe aflevering herkennen" - so most of them wrap onto
+   a second line. That is left alone: the rail is a list of names to recognise, not a column to
+   line up, and truncating them would throw away the only thing that makes a tick findable. */
+.pp-chapters a:hover{color:var(--fg)}
+.pp-chapters a.is-past{color:color-mix(in srgb,var(--fg) calc(85% * var(--dim)),transparent)}
+.pp-chapters a.is-current{
+  color:var(--fg);
+  border-left-color:var(--accent-ink);
+  background:color-mix(in srgb,var(--fg) 5%,transparent);
+}
+.pp-chapters a:focus-visible{outline:2px solid var(--accent-solid);outline-offset:2px}
+/* The project name above the list. It slides down into the space the masthead vacates rather
+   than appearing, so it reads as the same heading moving rather than as a new element. */
+.pp-ch-title{
+  margin:0 0 .3rem;
+  padding:.3rem .5rem .6rem;
+  border-bottom:1px solid color-mix(in srgb,var(--fg) 16%,transparent);
+  font:600 .8rem var(--mono);
+  color:var(--fg);
+  opacity:0;
+  transform:translateY(-8px);
+  transition:opacity .3s var(--ease),transform .3s var(--ease);
+}
+.pp-chapters:not(.is-at-top) .pp-ch-title{opacity:1;transform:translateY(0)}
+
+/* 1480px is where the rail's 14rem of reserved gutter plus the page's own edge just fits beside
+   the 62rem column; below it the max() above would be holding the rail on top of the text, so
+   it goes away instead. The same bargain index.html makes with its furniture - the page reads
+   fine without it, since every heading is reached by scrolling. */
+@media(max-width:1479px){.pp-chapters{display:none}}
+
+/* ---- Footer ----
+   The giant wordmark and the closing wave are index.html's, reused wholesale so the last screen
+   of a project page is the last screen of the site. The one override is the width: .foot-row
+   inherits index.html's --max (740px), which is right against that page's sections but would
+   leave the copyright line visibly narrower than the prose above it here. */
+.pp-foot .foot-row{max-width:62rem}
+
+@media(max-width:600px){
+  .pp-head{padding:8rem 0 2.6rem}
+  .pp-section,.pp-section+.pp-section{padding-top:2.4rem;margin-top:2.4rem}
+  .snippet pre{padding:1rem;font-size:.8rem}
+  .pp-next{padding-top:2rem;padding-bottom:3.5rem}
+}

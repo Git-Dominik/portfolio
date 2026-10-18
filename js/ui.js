@@ -27,9 +27,12 @@
     c.addEventListener('mouseleave', function(){ tx = 0; ty = 0; kick(); });
   })();
 
-  /* ---- Project list: one row open at a time ---- */
+  /* ---- Project list: one row open at a time ----
+     Scoped to button.proj-head, because a project that has its own page under projects/ uses
+     the same .proj-head class on an <a> - that one navigates and must never be turned into an
+     accordion row. Adding the element type here means the two kinds coexist without a flag. */
   (function(){
-    var heads = $$('.proj-head');
+    var heads = $$('button.proj-head');
     heads.forEach(function(h){
       h.addEventListener('click', function(){
         var row = h.parentNode, open = !row.classList.contains('is-open');

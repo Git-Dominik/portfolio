@@ -35,6 +35,12 @@
 .btn-primary:hover,.btn-primary:focus-visible{transform:translateY(-2px);border-color:var(--fg);color:var(--fg)}
 .project-more-link{font:.92rem var(--sans);text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--fg) 35%,transparent);text-underline-offset:3px}
 .project-more-link:hover{text-decoration-color:var(--accent-ink)}
+/* The read-more on the featured card, as a distinct destination from the two links that
+   surround it. It is underlined like them - it is one of the actions, not a hint - and it
+   takes the arrow so it reads as "go to the page" rather than as a third place on GitHub. */
+.project-more-arrow{display:inline-flex;align-items:center;gap:.4rem;text-decoration:none}
+.project-more-arrow::after{content:"\2192";display:inline-block;transition:transform .25s var(--out)}
+.project-more-arrow:hover::after{transform:translateX(4px)}
 @media(hover:none){
   .btn-primary:hover{transform:none;border-color:color-mix(in srgb,var(--fg) 28%,transparent);color:var(--fg)}
   .project-more-link:hover{text-decoration-color:color-mix(in srgb,var(--fg) 35%,transparent)}
@@ -77,6 +83,23 @@
 .proj-head:hover .proj-name{color:var(--fg)}
 .proj-row.is-open .proj-name{color:var(--fg)}
 .proj-row.is-open .proj-plus{transform:rotate(45deg)}
+
+/* A project that has its own page under projects/. The head is an <a> instead of a <button>
+   and carries the same classes, so the row keeps its height, its hover rules and its place in
+   the list - only the trailing control changes, from the plus that opens a panel to a label
+   that navigates. font:inherit and color:inherit are what the button got for free, so the
+   anchor has to be given them explicitly or it renders at the UA's link defaults. */
+a.proj-head{text-decoration:none;color:inherit;font:inherit;cursor:pointer}
+/* Dimmed like .proj-sum and brought up to --fg on hover, matching the name one line above.
+   The arrow slides rather than the label: the words are the thing being read, so moving them
+   would move the text under the pointer. */
+.proj-read{display:inline-flex;align-items:center;gap:.4rem;font:.86rem var(--sans);color:color-mix(in srgb,var(--fg) calc(58% * var(--dim)),transparent);transition:color .2s;white-space:nowrap}
+.proj-read::after{content:"\2192";display:inline-block;transition:transform .25s var(--out)}
+a.proj-head:hover .proj-read{color:var(--fg)}
+a.proj-head:hover .proj-read::after{transform:translateX(4px)}
+@media(hover:none){
+  .proj-read:hover{color:color-mix(in srgb,var(--fg) calc(58% * var(--dim)),transparent)}
+}
 .proj-body{display:grid;grid-template-rows:0fr;visibility:hidden;transition:grid-template-rows .45s var(--out),visibility 0s .45s}
 .proj-row.is-open .proj-body{grid-template-rows:1fr;visibility:visible;transition-delay:0s}
 /* overflow-clip-margin lets focus rings on links inside the panel escape the clip. */

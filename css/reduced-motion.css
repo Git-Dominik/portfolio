@@ -4,5 +4,8 @@
   .btn-cv,.btn-primary,.copy,.top,.proj-head,.nav-cv,.nav-plus,.nav-toggle span,.proj-plus,.skip-link,.site-nav,.nav-links,.hover-art{transition:none}
   .site-nav,.scroll-cue,.hero-pfp,.hero-name,.hero-role,.hero-greeting,.hero-actions,.project-card-glow,.scroll-cue span::after,.band-track{animation:none}
   body.nav-open .nav-links{animation:none}
-  .section-lines path{stroke-dashoffset:0;transition:none}
+  /* Both curve layers, not just index.html's: .pp-bg on the project pages draws itself in with
+     the same stroke-dash, so it needs the same opt-out or a long dash runs on a reader who
+     asked for none. */
+  .section-lines path,.pp-bg path{stroke-dashoffset:0;transition:none}
 }

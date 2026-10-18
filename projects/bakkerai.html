@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="nl" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>bakkerai · Dominik Krakowski</title>
+<meta name="description" content="Een AI-chatbot voor bakkerijstudenten aan Talland College. Vragen over recepten, technieken, theorie en schoolwerk.">
+<meta name="author" content="Dominik Krakowski">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#17171a" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#faf9f6" media="(prefers-color-scheme: light)">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="bakkerai · Dominik Krakowski">
+<meta property="og:description" content="Een AI-chatbot voor bakkerijstudenten aan Talland College. Vragen over recepten, technieken, theorie en schoolwerk.">
+<meta property="og:locale" content="nl_NL">
+<meta property="og:url" content="https://git-dominik.github.io/portfolio/projects/bakkerai.html">
+<meta property="og:image" content="https://git-dominik.github.io/portfolio/media/og-v3.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:alt" content="Illustratie van Dominik Krakowski">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="bakkerai · Dominik Krakowski">
+<meta name="twitter:description" content="Een AI-chatbot voor bakkerijstudenten aan Talland College. Vragen over recepten, technieken, theorie en schoolwerk.">
+<meta name="twitter:image" content="https://git-dominik.github.io/portfolio/media/og-v3.png">
+<link rel="canonical" href="https://git-dominik.github.io/portfolio/projects/bakkerai.html">
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,600,700,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/devicon/2.16.0/devicon.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/devicon/2.16.0/devicon.min.css"></noscript>
+<link rel="icon" type="image/png" sizes="32x32" href="../media/favicon/fav-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="../media/favicon/fav-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../media/favicon/fav-180.png">
+
+<!-- Same order as index.html, plus project.css last. The nav, theme, progress bar and wordmark
+     are the site's own, so a detail page inherits them rather than reimplementing them. -->
+<link rel="stylesheet" href="../css/base.css">
+<link rel="stylesheet" href="../css/nav.css">
+<link rel="stylesheet" href="../css/layout.css">
+<link rel="stylesheet" href="../css/skills.css">
+<link rel="stylesheet" href="../css/projects.css">
+<link rel="stylesheet" href="../css/contact.css">
+<link rel="stylesheet" href="../css/animations.css">
+<link rel="stylesheet" href="../css/reduced-motion.css">
+<link rel="stylesheet" href="../css/project.css">
+
+<!-- index.html also opens with <script>documentElement.classList.add('js')</script>, which holds the
+     nav's drop-in and the whole hero intro until the fonts land. It is deliberately NOT copied
+     here: .js:not(.go) is what keeps that intro from playing early, and on a page with no hero
+     the only thing it would gate is the nav bar itself - invisible for up to 2.5s before it
+     appears. Without the class the nav just fades in on load, which is what a content page wants. -->
+<!-- Same reason as index.html: the theme is decided before first paint, or the page renders a
+     frame in the wrong palette and then snaps. -->
+<script>
+(function(){
+  try{
+    var saved = localStorage.getItem('theme');
+    document.documentElement.dataset.theme =
+      (saved === 'light' || saved === 'dark') ? saved
+      : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  }catch(e){ document.documentElement.dataset.theme = 'light'; }
+})();
+</script>
+</head>
+<!-- .transitioned is what index.html's hero.js adds once the light palette takes over the lower
+     half of that page. There is no hero here and no scroll handler to add it, so the class is set
+     on the body directly - otherwise the light theme would resolve --bg and --fg to their DARK
+     values and this page would stay dark while the nav and the toggle said otherwise. The rule it
+     satisfies is scoped to [data-theme=light], so dark mode is untouched. -->
+<body class="pp transitioned">
+<!-- Filled in by js/chapters.js from the headings below. Empty in the markup on purpose: the
+     list is the page's own sections, and restating it here would be a second copy to keep
+     correct. With JS off it stays empty and the page reads top to bottom, which is the same
+     bargain the rest of this page makes. -->
+<nav class="pp-chapters" data-i18n-aria-label="pp.chapters" aria-label="Hoofdstukken"></nav>
+<a class="skip-link" href="#inhoud">Skip to content</a>
+<div class="progress" aria-hidden="true"></div>
+
+<nav class="site-nav" aria-label="Main">
+  <a href="../index.html" class="nav-logo" aria-label="Dominik Krakowski, terug naar de homepage">Dominik Krakowski</a>
+  <div class="nav-links" id="nav-links-panel">
+    <a href="../index.html#about" data-i18n="nav.about">Over mij</a>
+    <a href="../index.html#skills" data-i18n="nav.skills">Vaardigheden</a>
+    <a href="../index.html#experience" data-i18n="nav.experience">Ervaring</a>
+    <a href="../index.html#projects" data-i18n="nav.projects">Projecten</a>
+    <a href="../index.html#contact" data-i18n="nav.contact">Contact</a>
+  </div>
+  <div class="nav-right">
+    <a class="nav-cv" href="../media/Dominik_Krakowski_CV.pdf" download data-i18n="cv.nav">CV</a>
+    <a class="nav-gh" href="https://github.com/Git-Dominik" target="_blank" rel="noopener" aria-label="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
+    <div class="lang-switch" role="group" aria-label="Language">
+      <button data-lang="en" aria-pressed="false">EN</button>
+      <button data-lang="pl" aria-pressed="false">PL</button>
+      <button data-lang="nl" class="active" aria-pressed="true">NL</button>
+    </div>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-live="polite">
+      <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0-13a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0V5a1 1 0 0 1 1-1zm0 15a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0v-1a1 1 0 0 1 1-1zM4 11h1a1 1 0 1 1 0 2H4a1 1 0 1 1 0-2zm15 0h1a1 1 0 1 1 0 2h-1a1 1 0 1 1 0-2zM5.6 6.6a1 1 0 1 1 1.4 0l.7.7a1 1 0 1 1-1.4 1.4l-.7-.7a1 1 0 1 1 0-1.4zm10.6 10.6a1 1 0 1 1 1.4 0l.7.7a1 1 0 1 1-1.4 1.4l-.7-.7a1 1 0 1 1 0-1.4zm1.4-10.6a1 1 0 1 1 0 1.4l-.7.7A1 1 0 1 1 15.5 8l.7-.7a1 1 0 1 1 1.4 0zM7.3 17.9a1 1 0 1 1 0 1.4l-.7.7a1 1 0 1 1-1.4-1.4l.7-.7a1 1 0 1 1 1.4 0z"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      <span class="sr-only">Dark mode</span>
+    </button>
+    <button class="nav-toggle" aria-label="Menu" aria-expanded="false" aria-controls="nav-links-panel"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<div class="pp">
+  <!-- The page background: one continuous run of curves down the whole page, not a curve per
+       section. index.html hangs a .section-lines box inside each section, which is what makes
+       them read as decoration belonging to that section. Here they are the ground the whole
+       page sits on, so they are one layer, once, behind everything.
+
+       The curves are AUTHORED in an 800 x 1200 box - data-d holds that space, and the d that
+       ships is what a reader without JS sees. js/reveal.js re-fits both the viewBox and the
+       path data to the layer's real pixel size before anything is drawn, which is what keeps
+       the 1.4px stroke at 1.4px and the stroke-dash honest. See the .pp-bg block there.
+
+       pathLength="1" normalises each path's length so stroke-dasharray/stroke-dashoffset can
+       be written as 1 and mean "the whole line" however long the curve turns out - the same
+       trick .section-lines uses. -->
+  <div class="pp-bg" aria-hidden="true"><svg viewBox="0 0 800 1200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path pathLength="1" data-d="M -50 120 C 90 210, 210 30, 340 140 S 610 260, 700 90 S 950 40, 990 210" d="M -50 120 C 90 210, 210 30, 340 140 S 610 260, 700 90 S 950 40, 990 210"/>
+    <path pathLength="1" data-d="M -50 360 C 140 300, 230 450, 400 370 S 660 260, 760 410 S 900 370, 970 450" d="M -50 360 C 140 300, 230 450, 400 370 S 660 260, 760 410 S 900 370, 970 450"/>
+    <path pathLength="1" data-d="M -50 620 C 60 540, 260 680, 380 590 S 560 460, 720 600 S 880 720, 970 630" d="M -50 620 C 60 540, 260 680, 380 590 S 560 460, 720 600 S 880 720, 970 630"/>
+    <path pathLength="1" data-d="M -50 880 C 120 800, 180 960, 340 900 S 540 780, 640 920 S 900 870, 950 960" d="M -50 880 C 120 800, 180 960, 340 900 S 540 780, 640 920 S 900 870, 950 960"/>
+    <path pathLength="1" data-d="M -50 1080 C 90 1170, 210 990, 340 1100 S 610 1220, 700 1050 S 950 1000, 990 1170" d="M -50 1080 C 90 1170, 210 990, 340 1100 S 610 1220, 700 1050 S 950 1000, 990 1170"/>
+  </svg></div>
+  <header class="pp-head">
+    <div class="pp-wrap">
+      <a class="pp-back" href="../index.html#projects" data-i18n="pp.back">&larr; Alle projecten</a>
+      <h1 class="pp-title">bakkerai</h1>
+      <p class="pp-tagline" data-i18n-html="pp.bakker.tagline">Een AI-chatbot voor bakkerijstudenten aan Talland College. Vragen over recepten, technieken, theorie en schoolwerk.</p>
+      <!-- The skills board's own .skill-tiles, so each entry carries its real mark and lights in
+           that mark's own colour on hover - the :has() rules in css/skills.css. These five are
+           the README's "Tech used" list verbatim; Playwright, Zod and the AI SDK are in the
+           package.json but they are not what the project is, so they stay out. Bun, TypeScript,
+           Prisma and SQLite all have a devicon glyph; Elysia has none, so it takes the same
+           <img class="skill-icon"> slot Gin does and gets its own :has() line over there. -->
+      <ul class="skill-tiles pp-stack">
+        <li class="skill-tile"><i class="devicon-bun-plain colored"></i><span>Bun</span></li>
+        <li class="skill-tile"><i class="devicon-typescript-plain colored"></i><span>TypeScript</span></li>
+        <li class="skill-tile"><img class="skill-icon skill-icon-elysia" src="../media/elysia.svg" alt="" width="28" height="28" loading="lazy" decoding="async"><span>Elysia</span></li>
+        <li class="skill-tile"><i class="devicon-prisma-plain colored"></i><span>Prisma</span></li>
+        <li class="skill-tile"><i class="devicon-sqlite-plain colored"></i><span>SQLite</span></li>
+      </ul>
+      <div class="pp-actions">
+        <a class="btn-cv" href="https://github.com/Git-Dominik/bakkerai" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.9 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.2.5-2.3 1.2-3.1-.1-.3-.5-1.6.1-3.1 0 0 1-.3 3.3 1.2a11 11 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.5.2 2.8.1 3.1.8.8 1.2 1.9 1.2 3.1 0 4.7-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3"/></svg>
+          <span data-i18n="pp.source">Bekijk op GitHub</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+<main class="pp-wrap" id="inhoud">
+    <!-- Everything below is the README in prose, with the code beside it. The exception is the
+         first section, which is the reason the project exists - that one is not in the README,
+         because a README cannot say why something should not have been built. -->
+
+    <section class="pp-section" id="waarom">
+      <h2 class="pp-h2" data-i18n="pp.why">Waarom ik dit heb gemaakt</h2>
+      <p data-i18n-html="pp.bakker.why">Op school zit je met een bakkerijvak dat op papier vooral uit theorie en praktijkopdrachten bestaat. Een recept dat ergens op een site staat is een mooi begin, maar wie het precies in de juiste volgorde uitvoert is een ander verhaal. Dus een chatbot die precies de recepten en de leerstof van Talland erbij kan zoeken.</p>
+      <p data-i18n-html="pp.bakker.why2">Een klein project om bakkerijstudenten te helpen leren en makkelijker vragen te kunnen stellen.</p>
+    </section>
+
+    <section class="pp-section" id="doet">
+      <h2 class="pp-h2" data-i18n="pp.does">Wat het doet</h2>
+      <ul class="pp-list">
+        <li data-i18n="pp.bakker.does1">Inloggen en registreren</li>
+        <li data-i18n="pp.bakker.does2">AI-chat over bakkerijgerelateerde vragen</li>
+        <li data-i18n="pp.bakker.does3">Bewaart de chatgeschiedenis</li>
+        <li data-i18n="pp.bakker.does4">Administratiepagina om gebruikers en chats te bekijken</li>
+      </ul>
+    </section>
+
+    <section class="pp-section" id="tools">
+      <h2 class="pp-h2" data-i18n="pp.bakker.toolsTitle">De tools</h2>
+      <p data-i18n-html="pp.bakker.toolsBody">De chatbot krijgt zes tools mee, en de system prompt zegt letterlijk dat hij <em>altijd</em> via die tools moet werken en nooit op zijn eigen kennis. Er zit geen recept of lesstof in dit project zelf; het haalt het op van svhbakkerstalent.nl.</p>
+      <ul class="pp-list">
+        <li data-i18n-html="pp.bakker.tool1"><code>getRecipesCategoriesTool</code> — alle receptcategorieën voor een thema</li>
+        <li data-i18n-html="pp.bakker.tool2"><code>getRecipesTool</code> — de slugs van alle recepten in die categorie</li>
+        <li data-i18n-html="pp.bakker.tool3"><code>getRecipeTool</code> — één recept op basis van die slug</li>
+        <li data-i18n-html="pp.bakker.tool4"><code>getLessonTopicsTool</code> — de onderwerpen van leerjaar 1</li>
+        <li data-i18n-html="pp.bakker.tool5"><code>getLessonItemsTool</code> — de lesstukken binnen een onderwerp</li>
+        <li data-i18n-html="pp.bakker.tool6"><code>getLessonPageTool</code> — de inhoud van één lespagina</li>
+      </ul>
+      <p data-i18n-html="pp.bakker.toolsBody2">Elke tool is een losse functie met Playwright: inloggen, de juiste filters aanzetten, de resultaten uit de DOM lezen. De route die de AI volgt staat in de prompt, inclusief dat hij door moet blijven pagineren zolang er pagina's over zijn.</p>
+      <div class="snippet">
+        <div class="snippet-bar"><span class="lang">TypeScript</span><span class="file">src/chats.ts</span></div>
+<pre><code data-lang="ts">const textStream = (abortSignal: AbortSignal) =&gt;
+  streamText({
+    model: groq("qwen/qwen3.6-27b"),
+    abortSignal,
+    tools: {
+      getRecipesCategoriesTool,
+      getRecipesTool,
+      getRecipeTool,
+      getLessonTopicsTool,
+      getLessonItemsTool,
+      getLessonPageTool,
+    },
+    stopWhen: stepCountIs(10),
+    system: `
+    Je bent een leer-assistent voor Talland bakkerij leerlingen. Je haalt ALTIJD
+    informatie op via tools — gebruik NOOIT je eigen kennis.
+
+    REGELS:
+    - Gebruik tools direct, zonder te vragen om bevestiging
+    - Noem nooit tool namen aan de gebruiker
+    - Antwoord alleen op basis van tool output
+
+    Leerlijn: getLessonTopicsTool → getLessonItemsTool per topic
+              → getLessonPageTool per item → alle pagina's
+    Recepten: getRecipesCategoriesTool of getRecipesTool
+              → getRecipeTool met slug
+
+    Antwoord in het Nederlands, alleen markdown.
+  `,
+    prompt: aiMessages,</code></pre>
+      </div>
+    </section>
+
+    <section class="pp-section" id="scrapen">
+      <h2 class="pp-h2" data-i18n="pp.bakker.scrapeTitle">De site uitlezen</h2>
+      <p data-i18n-html="pp.bakker.scrapeBody">Je kunt niet zomaar JSON van svhbakkerstalent.nl ophalen, dus er wordt een headless Firefox voor geopend. Eerst inloggen, dan de opslag opslaan zodat de volgende tool-call de cookie hergebruikt in plaats van opnieuw in te loggen.</p>
+      <div class="snippet">
+        <div class="snippet-bar"><span class="lang">TypeScript</span><span class="file">src/api/svh.ts</span></div>
+<pre><code data-lang="ts">export async function login(email: string, password: string) {
+  await mutex.acquire();
+
+  const context = await browser.newContext();
+
+  if (await Bun.file("storage.json").exists()) {
+    await context.setStorageState("storage.json");
+    const crCookie = (await context.cookies()).find((c) =&gt; c.name === "CR");
+    if (crCookie &amp;&amp; (await verifyCookie(crCookie))) {
+      mutex.release();
+      await context.close();
+      return;
+    } else {
+      console.log("[login] cookie invalid or expired, getting new cookie");
+    }
+  } else {
+    console.log("[login] no storage.json found, performing full login");
+  }
+
+  const page = await context.newPage();
+
+  try {
+    await page.goto("https://svhbakkerstalent.nl/login.html");
+
+    await page.fill("input[id='email']", email);
+    await page.fill("input[class='password']", password);
+    await page.click(".rememberme label");
+
+    await page.click("input[type='submit']");
+
+    await context.storageState({ path: "storage.json" });
+  } finally {
+    await context.close();
+    mutex.release();
+  }
+}</code></pre>
+      </div>
+      <p data-i18n-html="pp.bakker.scrapeBody2">En daarna een van de tools, die door de receptlijst loopt en de slug uit de link haalt in plaats van de zichtbare naam:</p>
+      <div class="snippet">
+        <div class="snippet-bar"><span class="lang">TypeScript</span><span class="file">src/api/svh.ts</span></div>
+<pre><code data-lang="ts">const recipes = await page
+  .locator(".list-item.product-block:not(.dummy)")
+  .all();
+
+for (const recipe of recipes) {
+  var name = await recipe.getAttribute("href");
+  name = name?.split("/").pop() ?? null;
+
+  if (name) recipeNames.push(name);
+}</code></pre>
+      </div>
+    </section>
+
+    <section class="pp-section" id="stromen">
+      <h2 class="pp-h2" data-i18n="pp.bakker.streamTitle">Antwoorden komen als stream</h2>
+      <p data-i18n-html="pp.bakker.streamBody">Een recept antwoord duurt even, dus het model streamt. De chunks gaan één voor één als newline-delimited JSON naar de browser, en als de vraag van leerlingen weg is bij het sluiten van het tabblad moet de stream ook stoppen. Dat loopt via de <code>AbortSignal</code> van het request zelf.</p>
+      <div class="snippet">
+        <div class="snippet-bar"><span class="lang">TypeScript</span><span class="file">src/chats.ts</span></div>
+<pre><code data-lang="ts">const streamAbort = new AbortController();
+request.signal.addEventListener("abort", () =&gt; {
+  streamAbort.abort();
+});
+
+const readable = new ReadableStream({
+  async start(controller) {
+    const encoder = new TextEncoder();
+    try {
+      const stream = textStream(streamAbort.signal);
+      for await (const chunk of stream.fullStream) {
+        if (streamAbort.signal.aborted) return;
+        controller.enqueue(encoder.encode(JSON.stringify(chunk) + "\n"));
+      }
+    } catch (e: any) {
+      if (e.name !== "AbortError") console.error("stream error:", e);
+    } finally {
+      try {
+        controller.close();
+      } catch {}
+    }
+  },
+  cancel() {
+    streamAbort.abort();
+  },
+});
+
+return new Response(readable, {
+  headers: { "Content-Type": "application/x-ndjson" },
+});</code></pre>
+      </div>
+    </section>
+
+    <section class="pp-section" id="data">
+      <h2 class="pp-h2" data-i18n="pp.bakker.dataTitle">Gebruikers en chats</h2>
+      <p data-i18n-html="pp.bakker.dataBody">Drie tabellen en niks meer. Wachtwoorden lopen door <code>argon2</code>, en daarna gaat er een JWT in een httpOnly-cookie voor zeven dagen.</p>
+      <div class="snippet">
+        <div class="snippet-bar"><span class="lang">Prisma</span><span class="file">prisma/schema.prisma</span></div>
+<pre><code data-lang="ts">model User {
+  id       Int       @id @default(autoincrement())
+  name     String
+  email    String    @unique
+  password String
+  chats    Chat[]
+  messages Message[]
+}
+
+model Chat {
+  id       Int       @id @default(autoincrement())
+  topic    String?
+  messages Message[]
+  user     User      @relation(fields: [userId], references: [id])
+  userId   Int
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  content   String
+  timestamp DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    Int?
+  chat      Chat     @relation(fields: [chatId], references: [id])
+  chatId    Int
+}</code></pre>
+      </div>
+      <p data-i18n-html="pp.bakker.dataBody2">Het onderwerp bovenaan een gesprek wordt er pas achteraf bijgezet, door de eerste keer dat er een antwoord afkomt:</p>
+      <div class="snippet">
+        <div class="snippet-bar"><span class="lang">TypeScript</span><span class="file">src/chats.ts</span></div>
+<pre><code data-lang="ts">if (!chat.topic) {
+  const chatHistory = aiMessages.map((c) =&gt; c.content.toString());
+  chatHistory.push(text);
+
+  const { text: topic } = await generateText({
+    model: groq("compound-mini"),
+    prompt: `Genereer een onderwerp van deze conversatie (max 29 chars): ${chatHistory}`,
+  });
+  await prisma.chat.update({
+    where: { id: chat.id },
+    data: { topic },
+  });
+}</code></pre>
+      </div>
+    </section>
+
+    <section class="pp-section" id="starten">
+      <h2 class="pp-h2" data-i18n="pp.run">Starten</h2>
+      <div class="snippet">
+        <div class="snippet-bar"><span class="lang">bash</span><span class="file">terminal</span></div>
+<pre><code data-lang="sh">bun install
+bun run migrate
+bun run dev</code></pre>
+      </div>
+      <p data-i18n-html="pp.bakker.runBody">De app draait op <code>http://localhost:3000</code>.</p>
+    </section>
+
+    <nav class="pp-next" aria-label="Projecten">
+      <a href="../index.html#projects" data-i18n="pp.back">&larr; Alle projecten</a>
+      <a class="next" href="qbit-service.html" data-i18n="pp.bakker.nextTo">Volgende: qbit-service &rarr;</a>
+      <!-- .next walks the list on the index in order, so this is the step down from here: the
+           index lists Bakkerai, qbit-service, then nyaasiauto. exhibition-launcher is still a
+           button on the index, so there is nothing after this to point at. -->
+    </nav>
+  </main>
+</div>
+
+<div class="closing pp-foot">
+  <div class="closing-bloom" aria-hidden="true"></div>
+  <canvas class="closing-wave" aria-hidden="true"></canvas>
+  <footer class="foot">
+    <div class="wordmark" id="wordmark" aria-hidden="true"><span class="out">Dominik</span><span class="fill">Dominik</span></div>
+    <div class="foot-row">
+      <span data-i18n="footer.text">© 2026 Dominik</span>
+      <button class="top" id="toTop" type="button" data-i18n="footer.top">Naar boven</button>
+    </div>
+  </footer>
+</div>
+
+<script defer src="../js/core.js"></script>
+<script defer src="../js/theme.js"></script>
+<script defer src="../js/i18n.js"></script>
+<script defer src="../js/herowave.js"></script>
+<script defer src="../js/nav.js"></script>
+<script defer src="../js/reveal.js"></script>
+<script defer src="../js/ui.js"></script>
+<script defer src="../js/chapters.js"></script>
+<script defer src="../js/highlight.js"></script>
+</body>
+</html>

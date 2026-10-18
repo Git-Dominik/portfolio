@@ -12,6 +12,68 @@
     secs.forEach(function(s){ seen.observe(s); });
   })();
 
+  /* ---- Project pages: the background curves ----
+     index.html's .section-lines are per-section and small enough that their viewBox is cut to
+     roughly the size they are drawn at, so the browser's default scaling on them is close to
+     1:1. .pp-bg is one layer as tall as the whole page, and a fixed viewBox stretched to fill
+     it scales by ~3x vertically against ~1.6x horizontally. That is what forces everything
+     below: stroke-width is multiplied by the transform, so a 1.4 line renders at 3px, and the
+     obvious fix - vector-effect:non-scaling-stroke - breaks the animation. Non-scaling-stroke
+     evaluates the dash pattern in screen space while pathLength="1" normalises it in user
+     space, and once those two disagree the dash no longer tracks the path: instead of one
+     line growing from its start it renders as the head of the line plus a detached stub
+     somewhere further along.
+
+     So neither: measure the layer and refit the viewBox to its exact pixel box, and rescale
+     the path data to match. The shape on screen is unchanged - the same curves, stretched to
+     the same places - but the mapping is now 1:1, so the stroke is 1.4px as written and the
+     dash measures the real path length. fit() runs before the observer below starts the
+     draw, so the corrected geometry is in place before a single curve is visible, and there
+     is nothing to flash. */
+  (function(){
+    var bg = $('.pp-bg'); if(!bg) return;
+    var svg = bg.querySelector('svg'); if(!svg) return;
+    var paths = $$('path', svg);
+    var AUTHORED_W = 800, AUTHORED_H = 1200;
+
+    /* Every second number in these paths is a y. They are written with absolute M/C/S only -
+       no relative commands and no H/V/A - which is what makes that safe; a curve written any
+       other way would need a real path parser here, so it has to be unwritten first. */
+    function scale(d, kx, ky){
+      var i = 0;
+      return d.replace(/-?\d*\.?\d+/g, function(n){
+        var v = parseFloat(n);
+        return (i++ % 2 ? (v * ky) : (v * kx)).toFixed(1);
+      });
+    }
+
+    function fit(){
+      var w = Math.round(svg.clientWidth), h = Math.round(svg.clientHeight);
+      if(!w || !h) return;
+      svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+      var kx = w / AUTHORED_W, ky = h / AUTHORED_H;
+      paths.forEach(function(p){ p.setAttribute('d', scale(p.getAttribute('data-d'), kx, ky)); });
+    }
+    fit();
+
+    /* The layer grows with its copy and changes shape on resize, so refitting on either is
+       not defensive - the first happens whenever a section's reveal is still settling and the
+       second on every rotation. */
+    if(window.ResizeObserver) new ResizeObserver(fit).observe(svg);
+    window.addEventListener('resize', fit, { passive: true });
+
+    /* .pp-bg sits outside <main>, so the `main section[id]` observer above never reaches it
+       and the stroke-dash hand-off in css/project.css needs its own trigger. threshold:0,
+       not the .12 up there: this layer is as tall as the whole page, and a box several
+       viewports long never reaches 12% of ITSELF inside one viewport, so at .12 it would
+       simply never fire on a long page. */
+    if(!('IntersectionObserver' in window)){ bg.classList.add('in-view'); return; }
+    var drawn = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in-view'); drawn.unobserve(e.target); } });
+    }, { threshold: 0 });
+    drawn.observe(bg);
+  })();
+
   /* ---- Park the decorative loops once they scroll away ---- */
   (function(){
     if(!('IntersectionObserver' in window)) return;
@@ -65,6 +127,26 @@
        revealed node is not. .proj-row is still here: it is click-to-open, not hovered. */
     [
       ['.eyebrow-heading', 'sweep'],
+      /* The project pages' masthead, then its content blocks - one selector each so the stagger
+         runs across them in document order and reads as a page arriving rather than as a dozen
+         separate things. Granularity is deliberately the BLOCK, not the paragraph and not the
+         section: it is what index.html reveals too (.project-card, .skill-panel, .exp-body,
+         .fact), and it is the only level that is safe under a mask.
+
+         Masking a whole .pp-section was the earlier version here and it was wrong twice. A mask
+         over a full-width band containing opaque .snippet blocks promotes the band to its own
+         layer to animate the mask, and that layer is not filled - hence the black rectangle
+         that flashed over a section as the sweep ran back out. Masking each block separately
+         masks small things over each other, so there is no wide layer to show through. And the
+         snippets themselves want to arrive with their section rather than being the one thing
+         on the page that is already there.
+
+         .quick-facts is NOT in this list: its children are .fact, which the entry above already
+         reveals one panel at a time. Naming both would transform a parent and a child at once.
+         That grid is gone from the project pages now - the masthead carries the stack instead -
+         but the rule still guards against anyone adding one back. */
+      ['.pp-back,.pp-title,.pp-tagline,.pp-stack,.pp-actions', 'sweep', .06],
+      ['.pp-h2,.pp-h3,.pp-section>p,.pp-section .pp-list,.pp-section .snippet,.pp-next', 'sweep', .07],
       ['.divider', 'line'],
       ['.lead,.lang-spoken', 'sweep', .12, .1],
       /* The About facts, configured exactly like .skill-panel above - same mode, same .1

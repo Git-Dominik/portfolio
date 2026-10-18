@@ -155,6 +155,12 @@
 /* A chip that carries a technology icon. Same pill as above, just with room for a glyph. */
 .tag-icon{display:inline-flex;align-items:center;gap:.45rem}
 .tag-icon i{font-size:1.05rem;line-height:1;flex:none}
+/* The <img> half of the icon slot, for marks devicon does not carry - same pairing as
+   .skill-icon in css/skills.css, at the tag's smaller size. Keyed on .tag-icon rather than on
+   a per-mark class, so the rule above covers both without a second selector list. The 1.2rem
+   against the 1.05rem glyph is the same deliberate weight bump the skill tile makes: the
+   cropped source is a drawing, and it reads thinner than a solid wordmark at equal height. */
+.tag-icon img{width:1.2rem;height:1.05rem;object-fit:contain;flex:none}
 
 @media(max-width:480px){
   .exp{--rail:2.1rem;--gap:2.4rem}
