@@ -28,9 +28,6 @@
       grid.appendChild(frag);
       $('#contrib-total').textContent = d.total.lastYear;
 
-      box.hidden = false;
-      var sc = $('#contrib-scroll');
-      sc.scrollLeft = sc.scrollWidth;    // narrow screens: start at today, not a year ago
-    })
+      box.hidden = false;    })
     .catch(function(){ /* leave hidden */ });
 })(window.PF);

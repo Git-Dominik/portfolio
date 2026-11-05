@@ -114,8 +114,11 @@ a.proj-head:hover .proj-read::after{transform:translateX(4px)}
    colour at rising strength so it follows both themes without a palette of its own. */
 .contrib{margin-top:2.4rem}
 .contrib>.label{margin-bottom:.8rem}
-.contrib-scroll{overflow-x:auto;padding-bottom:.4rem}
-.contrib-grid{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,1fr);grid-auto-columns:minmax(9px,1fr);gap:3px;min-width:560px}
+/* Wider than the 740px text column so the 53 weeks get bigger squares without scrolling:
+   centred on the column and capped at 1000px or the viewport minus the page gutters. */
+.contrib{position:relative;left:50%;width:min(1000px,100vw - 2 * var(--edge));transform:translateX(-50%)}
+.contrib-grid{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,1fr);grid-auto-columns:1fr;gap:4px}
+@media(max-width:600px){.contrib-grid{gap:2px}}
 .contrib-grid i{aspect-ratio:1;background:color-mix(in srgb,var(--fg) 7%,transparent)}
 .contrib-grid i.l1{background:color-mix(in srgb,var(--accent-ink) 30%,transparent)}
 .contrib-grid i.l2{background:color-mix(in srgb,var(--accent-ink) 55%,transparent)}
