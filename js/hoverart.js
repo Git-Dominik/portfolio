@@ -70,12 +70,12 @@
       });
       atX = window.scrollX; atY = window.scrollY;
     }
-    /* Re-measure only when the page has actually moved. Relying on the scroll event alone
-       proved unreliable here: the bands silently kept their pre-scroll rects and every
-       hit test missed. Verifying the scroll position directly cannot go stale. */
-    function ensureFresh(){
-      if(window.scrollX !== atX || window.scrollY !== atY) refresh();
-    }
+    /* Re-measure on every pointer event instead of caching. Cached rects went stale whenever
+       a divider moved without a scroll: reveal transforms finishing, fonts or images
+       landing, accordions opening. The hit test then missed until a scroll forced a
+       refresh, which is why the art only appeared after scrolling once. Reading ~10 rects
+       per event is cheap, and layout is already clean when the pointer moves. */
+    function ensureFresh(){ refresh(); }
 
     /* The box we are already in gets a few px of slack on every side. Without it a pointer
        resting on the band's edge flips in and out on single-pixel jitter, replaying the
