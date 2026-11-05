@@ -109,3 +109,15 @@ a.proj-head:hover .proj-read::after{transform:translateX(4px)}
 .proj-foot .project-more-link{margin-left:auto}
 /* The old override here only existed to un-do the three-column head. With the name and the
    summary stacked there is nothing left to correct at this width. */
+
+/* GitHub contribution graph: one square per day, weeks as columns. Levels are the --fg
+   colour at rising strength so it follows both themes without a palette of its own. */
+.contrib{margin-top:2.4rem}
+.contrib>.label{margin-bottom:.8rem}
+.contrib-scroll{overflow-x:auto;padding-bottom:.4rem}
+.contrib-grid{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,1fr);grid-auto-columns:minmax(9px,1fr);gap:3px;min-width:560px}
+.contrib-grid i{aspect-ratio:1;background:color-mix(in srgb,var(--fg) 7%,transparent)}
+.contrib-grid i.l1{background:color-mix(in srgb,var(--accent-ink) 30%,transparent)}
+.contrib-grid i.l2{background:color-mix(in srgb,var(--accent-ink) 55%,transparent)}
+.contrib-grid i.l3{background:color-mix(in srgb,var(--accent-ink) 80%,transparent)}
+.contrib-grid i.l4{background:var(--accent-ink)}

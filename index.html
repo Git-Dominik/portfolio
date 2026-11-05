@@ -270,6 +270,13 @@
         </li>
       </ul>
     </div>
+
+    <!-- Filled in by js/contrib.js from GitHub's contribution data. Stays hidden if the
+         request fails, so a dead API never leaves an empty box on the page. -->
+    <div class="contrib" id="contrib" hidden>
+      <div class="label"><span id="contrib-total"></span> <span data-i18n="projects.contrib">contributies in het afgelopen jaar</span></div>
+      <div class="contrib-scroll" id="contrib-scroll"><div class="contrib-grid" id="contrib-grid" role="img" aria-label="GitHub contribution graph"></div></div>
+    </div>
   </section>
 
   <div class="divider" data-hover-img="media/hovers/divider-4.png" aria-hidden="true"></div>
@@ -320,6 +327,7 @@
 <script defer src="js/reveal.js"></script>
 <script defer src="js/experience.js"></script>
 <script defer src="js/ui.js"></script>
+<script defer src="js/contrib.js"></script>
 <script defer src="js/hoverart.js"></script>
 </body>
 </html>

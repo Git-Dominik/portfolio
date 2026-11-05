@@ -40,7 +40,7 @@
       "projects.qbitSum":"Small Go service bridging to qBittorrent",
       "projects.exhibition":"A game launcher for Windows, macOS and Linux with a built-in BitTorrent client. Still under construction.",
       "projects.exhibitionSum":"Game launcher with its own BitTorrent client",
-      "projects.view":"View on GitHub","projects.more":"More projects on GitHub","projects.moreLabel":"More projects","projects.readMore":"Read more",
+      "projects.contrib":"contributions in the last year","projects.view":"View on GitHub","projects.more":"More projects on GitHub","projects.moreLabel":"More projects","projects.readMore":"Read more",
 
       /* Project detail pages (projects/*.html). The shared labels come first; everything under
          qbit is the one page that exists so far. */
@@ -148,7 +148,7 @@
       "projects.qbitSum":"Mała usługa w Go będąca pomostem do qBittorrenta",
       "projects.exhibition":"Launcher gier dla Windows, macOS i Linuksa z wbudowanym klientem BitTorrent. Wciąż w budowie.",
       "projects.exhibitionSum":"Launcher gier z własnym klientem BitTorrent",
-      "projects.view":"Zobacz na GitHub","projects.more":"Więcej projektów na GitHub","projects.moreLabel":"Więcej projektów","projects.readMore":"Czytaj więcej",
+      "projects.contrib":"wkładów w ostatnim roku","projects.view":"Zobacz na GitHub","projects.more":"Więcej projektów na GitHub","projects.moreLabel":"Więcej projektów","projects.readMore":"Czytaj więcej",
 
       "pp.back":"← Wszystkie projekty","pp.source":"Zobacz na GitHub","pp.nextTo":"Dalej: nyaasiauto →","pp.bakker.nextTo":"Dalej: qbit-service →",
       "pp.chapters":"Rozdziały","pp.why":"Dlaczego to zbudowałem","pp.does":"Co robi","pp.api":"Endpointy API",
