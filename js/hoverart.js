@@ -77,10 +77,16 @@
       if(window.scrollX !== atX || window.scrollY !== atY) refresh();
     }
 
+    /* The box we are already in gets a few px of slack on every side. Without it a pointer
+       resting on the band's edge flips in and out on single-pixel jitter, replaying the
+       entrance bounce each time. */
+    var HYST = 6;
     function hitAt(x, y){
-      for(var i = 0; i < boxes.length; i++){
-        var k = boxes[i];
-        if(x >= k.l && x <= k.r && y >= k.t && y <= k.b) return k;
+      var i, k, s;
+      for(i = 0; i < boxes.length; i++){
+        k = boxes[i];
+        s = active && k.el === active.el ? HYST : 0;
+        if(x >= k.l - s && x <= k.r + s && y >= k.t - s && y <= k.b + s) return k;
       }
       return null;
     }
@@ -88,7 +94,7 @@
     var cx = 0, tx = 0;                 // X only: the art slides, the Y is locked to the rule
     var lineY = 0;
     var dir = 1, lastX = null, flippedAt = 0;
-    var active = null, raf = 0, shownAt = 0, last = 0;
+    var active = null, shown = null, raf = 0, shownAt = 0, last = 0;
     var w = 0, h = 0;
 
     function measure(){ w = img.offsetWidth || 0; h = img.offsetHeight || 0; }
@@ -103,13 +109,15 @@
          edge of the line. The mirror needs no positional compensation either, because
          transform-origin is 50% 100% and scaleX(-1) about the element's own centre flips
          the artwork inside the box without moving the box. */
-      var lo = active ? active.rl : EDGE, hi = (active ? active.rr : vw) - w;
-      if(hi < lo) lo = hi = lo + (active ? active.rr - active.rl - w : 0) / 2;
+      var lo = shown ? shown.rl : EDGE, hi = (shown ? shown.rr : vw) - w;
+      if(hi < lo) lo = hi = lo + (shown ? shown.rr - shown.rl - w : 0) / 2;
       var dx = Math.max(lo, Math.min(cx - w / 2, hi));
+      /* While fading out, `active` is already null; positioning off `shown` keeps the art
+         where it was instead of snapping to the viewport edge as it disappears. */
       // Locked to the rule: the bottom edge sits exactly ON the line, whatever the
       // pointer's Y does. The one exception is a divider scrolled right up to the top of
       // the viewport, where an untouched lock would put the art entirely off screen.
-      var dy = Math.max(EDGE, lineY - h);
+      var dy = Math.max(EDGE, (shown ? shown.line : lineY) - h);
       wrap.style.transform = 'translate3d(' + dx.toFixed(1) + 'px,' + dy.toFixed(1) + 'px,0) scale(' + scale.toFixed(3) + ') scaleX(' + (-dir) + ')';
     }
 
@@ -136,7 +144,7 @@
        obvious alternative. A missing file simply means no art on that divider. */
     var ALT = { png:'.jpg', jpg:'.png', jpeg:'.png', webp:'.png', gif:'.png' };
     function load(src){
-      img.onload = function(){ measure(); };
+      img.onload = function(){ measure(); kick(); };
       img.onerror = function(){
         var m = src.match(/\.([a-z0-9]+)$/i);
         var alt = m && ALT[m[1].toLowerCase()];
@@ -149,7 +157,7 @@
     }
 
     function enter(box, x, y){
-      active = box;
+      active = shown = box;
       lineY = box.line;
       if(img.getAttribute('src') !== box.src){ load(box.src); measure(); }
       tx = cx = x;
@@ -164,32 +172,45 @@
       wrap.classList.remove('on');
     }
 
-    document.addEventListener('mousemove', function(e){
+    var px = -1, py = -1;
+    function update(x, y, moving){
       ensureFresh();
-      var box = hitAt(e.clientX, e.clientY);
-      if(box !== active){
-        if(box) enter(box, e.clientX, e.clientY);
-        else leave();
-      } else if(box){
-        tx = e.clientX;                       // Y is deliberately not tracked
-        // A dead zone plus a short cooldown: flipping re-rasters the image, so a pointer
-        // trembling across the threshold would repaint it dozens of times a second.
-        var moved = lastX !== null && Math.abs(e.clientX - lastX) > FLIP_AT;
-        if(moved && now() - flippedAt > 90){
-          if(e.clientX > lastX !== (dir > 0)) dir = dir > 0 ? -1 : 1;
-          flippedAt = now();
-        }
-        lastX = e.clientX;
+      var box = hitAt(x, y);
+      if(!box){ if(active) leave(); return; }
+      if(!active || box.el !== active.el){ enter(box, x, y); kick(); return; }
+      // Same divider: adopt the fresh rect (it changes on scroll/resize) and keep tracking.
+      active = shown = box;
+      if(!moving){ kick(); return; }
+      tx = x;                                 // Y is deliberately not tracked
+      // A dead zone plus a short cooldown: flipping re-rasters the image, so a pointer
+      // trembling across the threshold would repaint it dozens of times a second.
+      var moved = lastX !== null && Math.abs(x - lastX) > FLIP_AT;
+      if(moved && now() - flippedAt > 90){
+        if(x > lastX !== (dir > 0)) dir = dir > 0 ? -1 : 1;
+        flippedAt = now();
       }
+      lastX = x;
       kick();
+    }
+
+    document.addEventListener('mousemove', function(e){
+      px = e.clientX; py = e.clientY;
+      update(px, py, true);
     }, { passive: true });
 
     document.addEventListener('mouseleave', leave);
+    /* Scrolling moves the dividers under a stationary pointer. Re-test at the last known
+       pointer position so the art follows its rule (or leaves) instead of vanishing on
+       every wheel tick and only coming back after the next mouse move. */
     document.addEventListener('scroll', function(){
-      if(active) leave();              // never let art linger over a stale position
+      if(px < 0) return;
+      update(px, py, false);
     }, { passive: true });
     window.addEventListener('blur', leave);
-    window.addEventListener('resize', function(){ refresh(); measure(); }, { passive: true });
+    function relayout(){ refresh(); measure(); if(px >= 0) update(px, py, false); }
+    window.addEventListener('resize', relayout, { passive: true });
+    // Fonts, images and reveal animations shift the dividers without any scroll or resize.
+    if(window.ResizeObserver) new ResizeObserver(relayout).observe(document.body);
     document.addEventListener('visibilitychange', function(){ if(document.hidden) leave(); });
 
     refresh();
